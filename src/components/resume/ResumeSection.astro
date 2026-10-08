@@ -1,0 +1,14 @@
+---
+// A resume section: a standard heading (ATS reads it as-is) and its content.
+interface Props {
+  id: string;
+  title: string;
+  class?: string;
+}
+const { id, title, class: className } = Astro.props;
+---
+
+<section class:list={['rs-section', `rs-section--${id}`, className]} aria-labelledby={`rs-${id}`}>
+  <h2 class="rs-section__title" id={`rs-${id}`}>{title}</h2>
+  <slot />
+</section>

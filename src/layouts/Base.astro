@@ -1,0 +1,85 @@
+---
+// Document shell: SEO, social cards, JSON-LD, fonts and global styles.
+// Internal links and assets are written root-absolute here; the build makes
+// them relative afterwards (scripts/lib/relativize.mjs) so each dist/<slug>/
+// works from any folder.
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import archivoLatin from '@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2?url';
+import { loadSite, abs } from '../lib/athlete.ts';
+import { personJsonLd } from '../lib/seo.ts';
+
+interface Props {
+  /** Page path, e.g. "/" or "/resume/". Omit for pages without a canonical URL (404). */
+  path?: string;
+  title?: string;
+  description?: string;
+  /** Force noindex (404, og card) regardless of the person's setting. */
+  noindex?: boolean;
+  /** Emit the Person JSON-LD block. */
+  jsonLd?: boolean;
+  /** Preload the display face (pages that open on the big condensed name). */
+  preloadDisplayFont?: boolean;
+  bodyClass?: string;
+}
+
+const data = await loadSite();
+const {
+  path,
+  title = data.title,
+  description = data.description,
+  jsonLd = false,
+  preloadDisplayFont = false,
+  bodyClass,
+} = Astro.props;
+const noindex = Astro.props.noindex || data.noindex;
+const canonical = path ? abs(data, path) : undefined;
+const ogImage = abs(data, '/og.jpg');
+const ogAlt = `${data.a.name.full}: ${data.a.headline ?? 'portfolio and resume'}`;
+---
+
+<!doctype html>
+<html lang="en" data-event-group={data.a.eventGroup ?? 'other'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+    <meta name="author" content={data.a.name.full} />
+    <meta name="theme-color" content="#FAFAF8" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    {preloadDisplayFont && <link rel="preload" href={archivoLatin} as="font" type="font/woff2" crossorigin />}
+    <script is:inline>
+      // Under automation (screenshots, og.jpg, accessibility checks) every
+      // animation renders in its final state (base.css .no-motion).
+      if (navigator.webdriver) document.documentElement.classList.add('no-motion');
+    </script>
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={data.a.name.full} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogAlt} />
+    <meta property="profile:first_name" content={data.a.name.first} />
+    <meta property="profile:last_name" content={data.a.name.last} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogAlt} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(personJsonLd(data))} />}
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <slot />
+  </body>
+</html>

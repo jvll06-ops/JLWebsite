@@ -1,0 +1,172 @@
+---
+// 1200x630 link-preview card. The build screenshots /og/ into og.jpg
+// (scripts/lib/render.mjs); nobody visits this page directly.
+// Studio: the white page, the pro portrait as a full-height 3:4 panel on the
+// right, the name huge in charcoal condensed type. imagery "original": the
+// untouched photo sits as a framed print on the right instead.
+import { Image } from 'astro:assets';
+import type { SiteData } from '../lib/athlete.ts';
+import { widthEm, programOf } from './fit.ts';
+
+interface Props {
+  data: SiteData;
+}
+const { data } = Astro.props;
+const { a } = data;
+const img = data.images.hero;
+const framed = a.imagery === 'original' && !img.placeholder;
+const nameWidth = Math.max(widthEm(a.name.first), widthEm(a.name.last));
+// Fill a 600px column (560px beside a framed photo), never above 160px.
+const nameSize = Math.min(160, Math.floor((framed ? 560 : 600) / (nameWidth * 1.03)));
+const line = `${programOf(a)} · Project Management`;
+---
+
+<div class="og">
+  {
+    !img.placeholder && !framed && (
+      <div class="og__panel">
+        <Image class="og__img" src={img.src} alt="" width={720} loading="eager" />
+      </div>
+    )
+  }
+  {
+    framed && (
+      <div class="og__frame">
+        <Image class="og__photo" src={img.src} alt="" width={720} loading="eager" />
+      </div>
+    )
+  }
+  <div class="og__text">
+    <p class="og__eyebrow">{line}</p>
+    <p class="og__name" style={`font-size: ${nameSize}px`}>
+      <span>{a.name.first}</span>
+      <span>{a.name.last}</span>
+    </p>
+    <p class="og__role">Project Manager Intern · {data.site.feniex.name} · 2026</p>
+  </div>
+  <p class="og__foot">
+    <span class="og__resume">Resume inside <span class="og__arrow">→</span></span>
+    <span class="og__host">{data.host}</span>
+  </p>
+</div>
+
+<style>
+  .og {
+    position: relative;
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--page);
+    color: var(--text);
+    font-family: var(--font-sans);
+  }
+  .og__panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 473px;
+    height: 630px;
+    background: var(--surface-2);
+  }
+  .og :global(.og__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 0%;
+  }
+  /* Original photo: a framed print with an offset accent keyline. */
+  .og__frame {
+    position: absolute;
+    top: 95px;
+    right: 96px;
+    width: 315px;
+    height: 420px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgb(23 24 27 / 0.06), 0 30px 60px -28px rgb(23 24 27 / 0.35);
+  }
+  .og__frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border: 1.5px solid var(--accent-line);
+    border-radius: inherit;
+    transform: translate(16px, 16px);
+  }
+  .og :global(.og__photo) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 0%;
+    border-radius: 4px;
+  }
+  .og__text {
+    position: absolute;
+    left: 72px;
+    top: 50%;
+    width: 640px;
+    transform: translateY(-56%);
+  }
+  .og__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .og__eyebrow::before {
+    content: '';
+    width: 40px;
+    height: 1.5px;
+    background: currentColor;
+  }
+  .og__name {
+    margin-top: 24px;
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-condensed);
+    font-weight: 800;
+    line-height: 0.86;
+    letter-spacing: -0.005em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .og__name span {
+    display: block;
+  }
+  .og__role {
+    margin-top: 28px;
+    font-size: 23px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .og__foot {
+    position: absolute;
+    left: 72px;
+    bottom: 52px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    font-size: 18px;
+  }
+  .og__resume {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 20px;
+    border-radius: 3px;
+    background: var(--btn);
+    color: var(--on-btn);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-stretch: 85%;
+  }
+  .og__host {
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+  }
+</style>

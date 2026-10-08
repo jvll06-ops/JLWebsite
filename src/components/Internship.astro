@@ -1,0 +1,282 @@
+---
+// At Work: the Feniex internship (every person has one) beside the studio
+// shot of a Feniex light bar ("feniex" plate), then Hamza's quote set large in
+// Newsreader on the page's one deep-charcoal band, with his HD monogram.
+import type { SiteData } from '../lib/athlete.ts';
+import { splitAttribution, initialsOf, coverSize } from './fit.ts';
+import { loadPlate } from './plates.ts';
+import Photo from './Photo.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  data: SiteData;
+}
+const { data } = Astro.props;
+const { a, site } = data;
+const quote = a.hamzaQuote;
+const feniexRole = a.resume?.experience.find((e) => /feniex/i.test(e.org ?? ''));
+const plate = await loadPlate('feniex');
+const who = quote ? splitAttribution(quote.attribution) : undefined;
+const meta = [site.feniex.name, feniexRole?.location ?? 'Austin, TX', feniexRole?.dates ?? '2026'];
+---
+
+<section id="internship" class="work" aria-labelledby="internship-title">
+  <div class="section work__main">
+    <div class:list={['container work__grid', { 'work__grid--plate': plate }]}>
+      <div class="work__role">
+        <header class="section__head work__head" data-reveal>
+          <span class="eyebrow">At work · 2026</span>
+          <h2 id="internship-title" class="section__title">
+            Project Manager Intern
+          </h2>
+          <p class="work__meta">
+            {
+              meta.map((m, i) => (
+                <>
+                  {i > 0 && (
+                    <span class="work__dot" aria-hidden="true">
+                      ·
+                    </span>
+                  )}
+                  <span>{m}</span>
+                </>
+              ))
+            }
+          </p>
+        </header>
+        <div data-reveal>
+          <p class="work__blurb">{site.feniex.blurb}</p>
+          {
+            feniexRole && feniexRole.bullets.length > 0 && (
+              <ul class="work__bullets">
+                {feniexRole.bullets.map((b) => (
+                  <li>{b}</li>
+                ))}
+              </ul>
+            )
+          }
+          <a class="btn btn--ghost work__link" href={site.feniex.url} rel="noopener">
+            <span class="btn__label">About {site.feniex.name}</span>
+            <Icon name="arrow-up-right" class="btn__icon btn__icon--diag" />
+          </a>
+        </div>
+      </div>
+      {
+        plate && (
+          <div class="work__visual" data-reveal aria-hidden="true">
+            <Photo
+              src={plate}
+              alt=""
+              widths={[640, 960, 1280, 1600, 2000]}
+              sizes={`(min-width: 64rem) ${coverSize(plate, 46, 'vw', 5 / 4)}, ${coverSize(plate, 100, 'vw', 4 / 3)}`}
+              loading="lazy"
+              decoding="async"
+              quality={50}
+              class="work__plate-img"
+            />
+          </div>
+        )
+      }
+    </div>
+  </div>
+
+  {
+    quote && who && (
+      <div class="work__band">
+        <div class="container">
+          <figure class="work__quote" data-reveal>
+            <p class="eyebrow work__label">Reference · {site.feniex.name}</p>
+            <div class="work__text">
+              <span class="work__mark" aria-hidden="true">
+                “
+              </span>
+              <blockquote>
+                <p>{quote.text}</p>
+              </blockquote>
+            </div>
+            <figcaption class="work__by">
+              <span class="work__mono" aria-hidden="true">
+                {initialsOf(who.name)}
+              </span>
+              <span class="work__who">
+                <span class="work__name">{who.name}</span>
+                {who.title && <span class="work__title">{who.title}</span>}
+              </span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .work__grid {
+    display: grid;
+    gap: var(--space-8);
+  }
+  .work__head {
+    margin-bottom: var(--space-6);
+  }
+  .work__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+  .work__dot {
+    color: var(--accent);
+  }
+  .work__blurb {
+    max-width: 36rem;
+    font-size: var(--text-lg);
+    line-height: 1.55;
+    color: var(--text-soft);
+  }
+  .work__bullets {
+    list-style: none;
+    margin: var(--space-6) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+    max-width: 36rem;
+  }
+  .work__bullets li {
+    position: relative;
+    padding-left: var(--space-6);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .work__bullets li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.8em;
+    width: 0.9rem;
+    height: 1px;
+    background: var(--accent);
+  }
+  .work__link {
+    margin-top: var(--space-6);
+    margin-left: -0.25rem;
+  }
+
+  /* The light bar in the studio: the bar sits right of centre in the plate. */
+  .work__visual {
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+  }
+  .work :global(.work__plate-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 88% 55%;
+  }
+
+  /* ---------- Hamza's quote: the one charcoal band ---------- */
+  .work__band {
+    padding-block: clamp(5rem, 3rem + 6vw, 9rem);
+    background: var(--charcoal);
+    color: var(--on-dark);
+  }
+  .work__quote {
+    position: relative;
+    display: grid;
+    gap: var(--space-6);
+  }
+  .work__label {
+    color: var(--accent-on-dark);
+  }
+  .work__text {
+    max-width: 54rem;
+  }
+  .work__mark {
+    display: block;
+    height: 0.45em;
+    font-family: var(--font-serif);
+    font-size: clamp(6rem, 4rem + 6vw, 10rem);
+    font-weight: 400;
+    line-height: 0.9;
+    color: var(--accent-on-dark);
+  }
+  .work__quote blockquote {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.625rem, 1.05rem + 2vw, 2.75rem);
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+    color: var(--on-dark);
+  }
+  .work__by {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-2);
+  }
+  .work__mono {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 1px solid var(--accent-on-dark);
+    border-radius: 50%;
+    font-stretch: var(--stretch-condensed);
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: 0.02em;
+    color: var(--on-dark);
+  }
+  .work__who {
+    display: grid;
+    gap: 0.15rem;
+  }
+  .work__name {
+    font-size: var(--text-base);
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.02em;
+  }
+  .work__title {
+    font-size: var(--text-sm);
+    color: var(--on-dark-muted);
+  }
+
+  @media (min-width: 64rem) {
+    .work__grid--plate {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: clamp(var(--space-8), 7vw, var(--space-10));
+      align-items: center;
+    }
+    .work__visual {
+      aspect-ratio: 5 / 4;
+    }
+    /* The quote holds the right two thirds; the label and who said it the left. */
+    .work__quote {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      grid-template-areas: 'label text' 'by text';
+      grid-template-rows: auto 1fr;
+      column-gap: clamp(var(--space-7), 6vw, var(--space-10));
+      row-gap: 0;
+    }
+    .work__label {
+      grid-area: label;
+      align-self: start;
+      padding-top: 0.6em;
+    }
+    .work__text {
+      grid-area: text;
+    }
+    .work__by {
+      grid-area: by;
+      align-self: end;
+      margin: 0;
+      padding-bottom: 0.4em;
+    }
+  }
+</style>

@@ -1,0 +1,165 @@
+---
+// 3-4 headline numbers, huge and condensed, counting up once on scroll. The
+// number fills its cell (sized from its own width), the unit sits beside it
+// in the accent.
+import type { SiteData } from '../lib/athlete.ts';
+import { splitStat, widthEm } from './fit.ts';
+
+interface Props {
+  data: SiteData;
+}
+const { stats } = Astro.props.data.a;
+const items = stats.map((s) => {
+  const parts = splitStat(s.value);
+  // Units render at 0.5em, so they count half.
+  const w = widthEm(parts.prefix + (parts.number ?? ''), { upper: false }) + widthEm(parts.suffix, { upper: false }) * 0.55;
+  return { ...s, parts, w: w.toFixed(3) };
+});
+---
+
+{
+  items.length > 0 && (
+    <section class="stats" aria-label="Highlights">
+      <dl class="stats__grid container" data-items={items.length}>
+        {items.map((s, i) => (
+          <div class="stats__item" data-reveal style={`--reveal-i: ${i}`}>
+            <dt class="stats__label">{s.label}</dt>
+            <dd class="stats__value" style={`--w: ${s.w}`}>
+              <span class="visually-hidden">{s.value}</span>
+              <span class="stats__figure" aria-hidden="true">
+                {s.parts.prefix && <span class="stats__affix">{s.parts.prefix}</span>}
+                {s.parts.number &&
+                  (s.parts.countable ? (
+                    <span class="stats__num" data-count-to={s.parts.number} data-decimals={s.parts.decimals}>
+                      {s.parts.number}
+                    </span>
+                  ) : (
+                    <span class="stats__num">{s.parts.number}</span>
+                  ))}
+                {s.parts.suffix && <span class="stats__unit">{s.parts.suffix}</span>}
+              </span>
+            </dd>
+            {s.note && <dd class="stats__note">{s.note}</dd>}
+          </div>
+        ))}
+      </dl>
+    </section>
+  )
+}
+
+<style>
+  .stats {
+    position: relative;
+    border-block: 1px solid var(--line);
+    background: var(--page);
+  }
+  .stats__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .stats__item {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-6) var(--space-4) var(--space-6) 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .stats__item:nth-child(2n) {
+    padding-left: var(--space-4);
+    border-left: 1px solid var(--line);
+  }
+  .stats__item:nth-last-child(-n + 2):nth-child(2n + 1),
+  .stats__item:nth-last-child(-n + 2):nth-child(2n + 1) ~ .stats__item {
+    border-bottom: 0;
+  }
+  .stats__item:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+  /* Every number sits on the same line of its row, whatever size it had to
+     shrink to: the box keeps the full height and the figure rests on its foot. */
+  .stats__value {
+    order: 1;
+    display: flex;
+    align-items: flex-end;
+    min-height: calc(5.5rem * 0.95);
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-condensed);
+    font-weight: var(--weight-display);
+    font-size: min(5.5rem, calc(100cqi / (var(--w) * 1.08)));
+    color: var(--text);
+    line-height: 0.95;
+    letter-spacing: var(--tracking-display);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .stats__figure {
+    display: inline-flex;
+    align-items: baseline;
+  }
+  .stats__num {
+    display: inline-block;
+    text-align: right;
+  }
+  /* pre: a flex item drops its trailing space, and "No. 3" needs it. */
+  .stats__affix {
+    white-space: pre;
+    color: var(--text);
+  }
+  .stats__unit {
+    margin-left: 0.04em;
+    font-size: 0.55em;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stats__label {
+    order: 2;
+    margin-top: var(--space-3);
+    max-width: 22ch;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    line-height: 1.35;
+    text-wrap: balance;
+    color: var(--text);
+  }
+  .stats__note {
+    order: 3;
+    margin-top: var(--space-1);
+    max-width: 28ch;
+    font-size: var(--text-xs);
+    line-height: 1.45;
+    text-wrap: balance;
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 56rem) {
+    .stats__grid {
+      grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+    }
+    .stats__grid[data-items='3'] {
+      --cols: 3;
+    }
+    .stats__grid[data-items='2'] {
+      --cols: 2;
+    }
+    .stats__grid[data-items='1'] {
+      --cols: 1;
+    }
+    .stats__item,
+    .stats__item:nth-child(2n) {
+      padding: var(--space-8) var(--space-6);
+      border-bottom: 0;
+      border-left: 1px solid var(--line);
+    }
+    .stats__item:last-child:nth-child(odd) {
+      grid-column: auto;
+    }
+    .stats__item:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+    .stats__value {
+      min-height: calc(7rem * 0.95);
+      font-size: min(7rem, calc(100cqi / (var(--w) * 1.08)));
+    }
+  }
+</style>

@@ -1,0 +1,123 @@
+/* "Studio" design tokens: a bright photo studio. Gallery-white page, light
+   grey surfaces, charcoal type, one quiet accent used sparingly (eyebrows,
+   small rules, hover, the resume photo ring). Components only ever read
+   variables from this file; the resume (styles/resume.css) and the class hub
+   (scripts/lib/hub.mjs) read the same names.
+   Contrast (WCAG): --text 17:1 on --page, --text-muted 6.1:1 on --page and
+   5.3:1 on --surface-2, --accent 5.6:1 on --page and 4.9:1 on --surface-2;
+   on the charcoal band --on-dark-muted 7.6:1 and --accent-on-dark 8.4:1. */
+:root {
+  /* Color: the studio (page and surfaces), charcoal type, the accent */
+  --page: #fafaf8;
+  --surface: #f2f1ee;
+  --surface-2: #eceae6;
+  --card: #ffffff;
+  --line: #e2e0db;
+  --line-strong: #cdcac3;
+  --text: #17181b;
+  --text-soft: #3a3c42;
+  --text-muted: #5c5f66;
+  /* The one accent: a muted bronze. Small text, rules, hover, rings. */
+  --accent: #7d5f43;
+  --accent-tint: rgba(125, 95, 67, 0.1);
+  --accent-line: rgba(125, 95, 67, 0.45);
+  /* The single deep-charcoal band (Hamza's quote) */
+  --charcoal: #17181b;
+  --charcoal-2: #222327;
+  --on-dark: #f4f3f0;
+  --on-dark-muted: #a7a9ae;
+  --line-dark: rgba(244, 243, 240, 0.14);
+  --accent-on-dark: #c9ae8e;
+  /* Buttons: charcoal with white text */
+  --btn: #17181b;
+  --btn-hover: #33353b;
+  --on-btn: #ffffff;
+  /* The resume paper */
+  --paper: #ffffff;
+  --paper-ink: #17181b;
+
+  --focus: var(--accent);
+  --glass: rgba(250, 250, 248, 0.82);
+
+  /* Type families */
+  --font-sans: 'Archivo Variable', 'Archivo', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-display: var(--font-sans);
+  --font-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+  /* Static faces for print/PDF (real, selectable text). */
+  --font-print-sans: 'Archivo Print', Arial, sans-serif;
+  --font-print-display: 'Archivo Print Condensed', 'Arial Narrow', Arial, sans-serif;
+  --font-print-serif: 'Newsreader', Georgia, serif;
+
+  /* Archivo width axis (font-stretch) */
+  --stretch-condensed: 65%;
+  --stretch-semi: 85%;
+  --stretch-normal: 100%;
+
+  /* Type scale */
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: clamp(1.375rem, 1.15rem + 0.7vw, 1.75rem);
+  --text-2xl: clamp(1.75rem, 1.3rem + 1.5vw, 2.625rem);
+  --text-3xl: clamp(2.75rem, 1.8rem + 3.6vw, 5.25rem);
+  --text-display: clamp(4.5rem, 2rem + 9vw, 11rem);
+  --text-serif-lg: clamp(1.25rem, 1.1rem + 0.45vw, 1.5rem);
+  --text-quote: clamp(1.75rem, 1.1rem + 2.2vw, 3.25rem);
+  --leading-tight: 0.9;
+  --leading-snug: 1.25;
+  --leading-body: 1.6;
+  --leading-serif: 1.65;
+  --tracking-display: -0.005em;
+  --tracking-caps: 0.16em;
+  --tracking-ui: 0.06em;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-display: 800;
+  --weight-black: 900;
+
+  /* Space (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+  --section-gap: clamp(5rem, 3rem + 7vw, 10rem);
+
+  /* Layout */
+  --container: 80rem;
+  --container-narrow: 46rem;
+  --gutter: clamp(1.25rem, 0.6rem + 3vw, 3.5rem);
+  --header-h: 4rem;
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 12px;
+  /* Soft studio shadows: wide, low and faint, never a dark halo. */
+  --shadow-sheet: 0 1px 2px rgb(23 24 27 / 0.06), 0 24px 60px -24px rgb(23 24 27 / 0.22);
+  --shadow-card: 0 1px 2px rgb(23 24 27 / 0.04), 0 12px 32px -18px rgb(23 24 27 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(23 24 27 / 0.04), 0 28px 50px -24px rgb(23 24 27 / 0.28);
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration: 200ms;
+  --duration-slow: 900ms;
+}
+
+/* Anything printed uses the static faces, so PDFs keep real text. (The
+   resume sheet reads the --font-print-* tokens itself: styles/resume.css.) */
+@media print {
+  :root {
+    --font-sans: var(--font-print-sans);
+    --font-display: var(--font-print-display);
+    --font-serif: var(--font-print-serif);
+  }
+}

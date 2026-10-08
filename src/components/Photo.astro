@@ -1,0 +1,46 @@
+---
+// One <picture> for every photo on the site: AVIF first, WebP second, a JPEG
+// for anything older. Each format gets its own quality, because one number
+// means very different things: AVIF 55 looks like WebP 72 or JPEG 76 and is
+// about 40% lighter, and nearly every browser takes the AVIF. (Astro's own
+// <Picture> has a single quality for all formats.)
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends Omit<HTMLAttributes<'img'>, 'src' | 'srcset' | 'width' | 'height' | 'alt' | 'sizes'> {
+  src: ImageMetadata;
+  alt: string;
+  /** Candidate widths in px. None wider than the source is generated. */
+  widths: number[];
+  sizes: string;
+  /** AVIF quality; WebP and JPEG follow from it. */
+  quality?: number;
+}
+
+const { src, alt, widths, sizes, quality = 55, ...attrs } = Astro.props;
+const fit = widths.filter((w) => w <= src.width);
+const candidates = fit.length ? fit : [src.width];
+// The plain src (browsers without srcset): a middle candidate, so no extra file is made.
+const base = candidates[Math.floor((candidates.length - 1) / 2)];
+
+const [avif, webp, jpg] = await Promise.all([
+  getImage({ src, widths: candidates, width: base, format: 'avif', quality }),
+  getImage({ src, widths: candidates, width: base, format: 'webp', quality: Math.min(quality + 17, 85) }),
+  getImage({ src, widths: candidates, width: base, format: 'jpg', quality: Math.min(quality + 21, 85) }),
+]);
+---
+
+<picture>
+  <source type="image/avif" srcset={avif.srcSet.attribute} sizes={sizes} />
+  <source type="image/webp" srcset={webp.srcSet.attribute} sizes={sizes} />
+  <img
+    src={jpg.src}
+    srcset={jpg.srcSet.attribute}
+    sizes={sizes}
+    alt={alt}
+    width={jpg.attributes.width}
+    height={jpg.attributes.height}
+    {...attrs}
+  />
+</picture>

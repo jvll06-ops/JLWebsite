@@ -1,0 +1,127 @@
+---
+// Press: outlet, date and headline as clean rows, each a link out.
+import type { SiteData } from '../lib/athlete.ts';
+import { readableDate } from './fit.ts';
+import Icon from './Icon.astro';
+
+interface Props {
+  data: SiteData;
+}
+const { press } = Astro.props.data.a;
+---
+
+{
+  press.length > 0 && (
+    <section id="press" class="section press" aria-labelledby="press-title">
+      <div class="container">
+        <header class="section__head press__head" data-reveal>
+          <span class="eyebrow">Press</span>
+          <h2 id="press-title" class="section__title">
+            In the news
+          </h2>
+        </header>
+        <ul class="press__list">
+          {press.map((p, i) => (
+            <li class="press__item" data-reveal style={`--reveal-i: ${i}`}>
+              <a class="press__link" href={p.url} rel="noopener">
+                <span class="press__meta">
+                  {p.outlet && <span class="press__outlet">{p.outlet}</span>}
+                  {p.date && <span class="press__date">{readableDate(p.date)}</span>}
+                </span>
+                <span class="press__title">{p.title}</span>
+                <span class="press__arrow" aria-hidden="true">
+                  <Icon name="arrow-up-right" />
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .press {
+    padding-top: calc(var(--section-gap) * 0.6);
+  }
+  .press__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .press__item {
+    border-bottom: 1px solid var(--line);
+  }
+  .press__link {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-2) var(--space-5);
+    align-items: center;
+    padding-block: var(--space-5);
+    text-decoration: none;
+  }
+  .press__meta {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .press__outlet {
+    color: var(--accent);
+  }
+  .press__title {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-medium);
+    line-height: 1.35;
+    text-wrap: balance;
+    transition: color var(--duration) var(--ease);
+  }
+  .press__arrow {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    color: var(--text);
+    transition:
+      background-color var(--duration) var(--ease),
+      border-color var(--duration) var(--ease),
+      transform var(--duration) var(--ease);
+  }
+  .press__arrow :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .press__link:hover .press__title {
+    color: var(--accent);
+  }
+  .press__link:hover .press__arrow {
+    border-color: var(--text);
+    background: var(--text);
+    color: var(--page);
+    transform: scale(1.04);
+  }
+  @media (min-width: 56rem) {
+    .press__link {
+      grid-template-columns: 15rem minmax(0, 1fr) auto;
+      gap: var(--space-6);
+      padding-block: var(--space-6);
+    }
+    .press__meta {
+      grid-column: auto;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+    .press__title {
+      font-size: var(--text-xl);
+    }
+  }
+</style>

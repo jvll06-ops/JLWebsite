@@ -1,0 +1,263 @@
+---
+// What the athlete brings to a team: a tall photo (their best action photo,
+// else the studio portrait in uniform: images.feature) beside four numbered
+// cards. Desktop: the photo holds the left column as tall as the heading and
+// cards together; phones and tablets: heading, photo, then the cards.
+import type { SiteData } from '../lib/athlete.ts';
+import Photo from './Photo.astro';
+import { PORTRAIT_NOTE, coverSize, portraitCredit } from './fit.ts';
+
+interface Props {
+  data: SiteData;
+}
+const { data } = Astro.props;
+const { a } = data;
+const strengths = a.strengths.slice(0, 4);
+// Track and field athletes come "from the track"; the spirit squad from the squad.
+const origin = a.eventGroup === 'other' ? 'the squad' : 'the track';
+const feature = data.images.feature;
+// A studio portrait carries its note, like everywhere else it appears.
+const isPortrait = feature !== undefined && feature.src === data.images.portrait.src;
+const note = isPortrait ? (a.imagery === 'original' ? portraitCredit(a) : PORTRAIT_NOTE) : undefined;
+// The frame is tall on desktop (about 4:7 beside the cards), 3:2 on tablets and square on phones; a
+// wide photo fills it by its height, so `sizes` asks for the width it is drawn at (fit.ts coverSize).
+const sizes = feature
+  ? [
+      `(min-width: 80rem) ${coverSize(feature.src, 32, 'rem', 4 / 7)}`,
+      `(min-width: 64rem) ${coverSize(feature.src, 38, 'vw', 4 / 7)}`,
+      `(min-width: 40rem) ${coverSize(feature.src, 100, 'vw', 3 / 2)}`,
+      coverSize(feature.src, 100, 'vw', 1),
+    ].join(', ')
+  : '100vw';
+---
+
+{
+  strengths.length > 0 && (
+    <section
+      id="strengths"
+      class:list={['section section--surface strengths', { 'strengths--photo': feature }]}
+      aria-labelledby="strengths-title"
+    >
+      <div class="container strengths__layout">
+        <header class="section__head strengths__head" data-reveal>
+          <span class="eyebrow">What {data.displayName} brings</span>
+          <h2 id="strengths-title" class="section__title">
+            From {origin} <br class="strengths__br" />
+            to the team
+          </h2>
+        </header>
+        {feature && (
+          <figure class="strengths__media" data-reveal>
+            <Photo
+              src={feature.src}
+              alt={feature.alt}
+              widths={[480, 640, 800, 1000, 1200, 1600, 2000]}
+              sizes={sizes}
+              loading="lazy"
+              decoding="async"
+              class="strengths__img"
+              style={`object-position: ${feature.position}`}
+            />
+            {note && <figcaption class="strengths__note">{note}</figcaption>}
+          </figure>
+        )}
+        <ol class="strengths__grid" data-items={strengths.length}>
+          {strengths.map((s, i) => (
+            <li class="strengths__item" data-reveal style={`--reveal-i: ${i}`}>
+              <div class="strengths__card">
+                <span class="strengths__num" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 class="strengths__title">{s.title}</h3>
+                {s.detail && <p class="strengths__detail">{s.detail}</p>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .strengths__layout {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .strengths__head {
+    margin-bottom: 0;
+  }
+
+  /* ---------- The photo ---------- */
+  .strengths__media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+  }
+  .strengths :global(.strengths__img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .strengths__note {
+    position: absolute;
+    left: var(--space-3);
+    bottom: var(--space-3);
+    max-width: calc(100% - 2 * var(--space-3));
+    padding: 0.3rem 0.6rem;
+    border-radius: 2px;
+    background: rgba(250, 250, 248, 0.88);
+    font-size: var(--text-2xs);
+    line-height: 1.35;
+    color: var(--text-muted);
+  }
+
+  /* ---------- The cards ---------- */
+  .strengths__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .strengths__item {
+    display: grid;
+  }
+  .strengths__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-6) var(--space-5);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--card);
+    transition:
+      border-color 300ms var(--ease),
+      transform 300ms var(--ease),
+      box-shadow 300ms var(--ease);
+  }
+  /* A short accent rule on top that runs the full width on hover. */
+  .strengths__card::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: var(--space-5);
+    right: var(--space-5);
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0.12);
+    transform-origin: left;
+    transition: transform 500ms var(--ease-out);
+  }
+  .strengths__card:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+  }
+  .strengths__card:hover::before {
+    transform: scaleX(1);
+  }
+  .strengths__num {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-condensed);
+    font-weight: var(--weight-semibold);
+    font-size: var(--text-lg);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .strengths__title {
+    margin-top: var(--space-6);
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-condensed);
+    font-weight: var(--weight-display);
+    font-size: clamp(1.625rem, 1.3rem + 1vw, 2.125rem);
+    line-height: 1;
+    letter-spacing: 0.005em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .strengths__detail {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .strengths__br {
+    display: none;
+  }
+
+  @media (min-width: 40rem) {
+    .strengths__media {
+      aspect-ratio: 3 / 2;
+    }
+    .strengths__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .strengths__grid[data-items='1'] {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .strengths__br {
+      display: inline;
+    }
+    /* No photo: the heading on top, the cards in one row. */
+    .strengths__grid {
+      grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr));
+      gap: var(--space-4);
+    }
+    .strengths__grid[data-items='3'] {
+      --n: 3;
+    }
+    .strengths__grid[data-items='2'] {
+      --n: 2;
+    }
+    .strengths__head {
+      margin-bottom: var(--space-4);
+    }
+    .strengths__card {
+      min-height: 17rem;
+      padding: var(--space-6);
+    }
+    /* Every title starts at the same height in its card, whatever follows it:
+       the titles of a row line up, and so do the first lines under them. */
+    .strengths__title {
+      margin-top: var(--space-7);
+    }
+
+    /* With the photo: the photo holds the left column, the heading and a
+       2 x 2 grid of cards the right one; the photo is exactly as tall as both. */
+    .strengths--photo .strengths__layout {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      grid-template-rows: auto 1fr;
+      column-gap: clamp(var(--space-7), 5vw, var(--space-9));
+      row-gap: 0;
+    }
+    .strengths--photo .strengths__media {
+      grid-column: 1;
+      grid-row: 1 / span 2;
+      aspect-ratio: auto;
+      min-height: 34rem;
+    }
+    .strengths--photo .strengths__head {
+      grid-column: 2;
+      margin-bottom: clamp(var(--space-6), 3vw, var(--space-8));
+    }
+    .strengths--photo .strengths__grid {
+      grid-column: 2;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-content: stretch;
+    }
+    .strengths--photo .strengths__grid[data-items='1'] {
+      grid-template-columns: 1fr;
+    }
+    .strengths--photo .strengths__card {
+      min-height: 15rem;
+    }
+  }
+</style>

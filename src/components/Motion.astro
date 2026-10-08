@@ -1,0 +1,89 @@
+---
+// Page motion, vanilla and tiny: reveal on scroll ([data-reveal]), stat
+// count-up ([data-count-to]) and the header's solid state once the page scrolls.
+// Everything is final-state without JS, under prefers-reduced-motion and
+// under automation (html.no-motion, set in Base.astro).
+// The count-up hook has its own attribute on purpose: it rewrites the
+// element's text, so it must never match a layout hook (the gallery and the
+// strengths grids once carried data-count, and lost their photos and cards).
+---
+
+<script>
+  const root = document.documentElement;
+  const still = root.classList.contains('no-motion') || matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Header: solid once the top sentinel scrolls away.
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const sentinel = document.querySelector('[data-top-sentinel]');
+  if (header && sentinel) {
+    new IntersectionObserver(([e]) => header.classList.toggle('is-scrolled', !e.isIntersecting)).observe(sentinel);
+  }
+
+  // Reveal: stagger siblings that enter together. Content is only hidden
+  // (html.motion) from here on, so it can never stay invisible. Whatever is
+  // already on screen counts as revealed before the class goes on, so nothing
+  // the reader is looking at blinks out and back.
+  const revealed = [...document.querySelectorAll<HTMLElement>('[data-reveal]')];
+  if (!still) {
+    for (const el of revealed) {
+      const r = el.getBoundingClientRect();
+      if (r.top < innerHeight && r.bottom > 0) el.classList.add('is-in');
+    }
+    root.classList.add('motion');
+    const io = new IntersectionObserver(
+      (entries) => {
+        let i = 0;
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const el = e.target as HTMLElement;
+          if (!el.style.getPropertyValue('--reveal-i')) el.style.setProperty('--reveal-i', String(i++));
+          el.classList.add('is-in');
+          io.unobserve(el);
+        }
+      },
+      // Any part of the element above the bottom tenth of the screen: a tall
+      // block (a long story on a phone) reveals as soon as it shows.
+      { rootMargin: '0px 0px -10% 0px', threshold: 0 },
+    );
+    revealed.filter((el) => !el.classList.contains('is-in')).forEach((el) => io.observe(el));
+    // Printing the page shows everything.
+    addEventListener('beforeprint', () => revealed.forEach((el) => el.classList.add('is-in')));
+  }
+
+  // Count-up: the final value is already in the HTML; animate from zero once.
+  const counters = [...document.querySelectorAll<HTMLElement>('[data-count-to]')];
+  if (!still && counters.length) {
+    const run = (el: HTMLElement) => {
+      const target = Number(el.dataset.countTo);
+      const decimals = Number(el.dataset.decimals ?? 0);
+      const final = el.textContent ?? '';
+      // Hold the final width so the number grows in place (tabular figures).
+      el.style.minWidth = `${el.getBoundingClientRect().width}px`;
+      const t0 = performance.now();
+      const dur = 1400;
+      const tick = (now: number) => {
+        const p = Math.min(1, (now - t0) / dur);
+        const eased = 1 - Math.pow(1 - p, 4);
+        el.textContent = p < 1 ? (target * eased).toFixed(decimals) : final;
+        if (p < 1) requestAnimationFrame(tick);
+        // Done: the number is its own width again (the held width must not outlive the count).
+        else el.style.minWidth = '';
+      };
+      el.textContent = (0).toFixed(decimals);
+      requestAnimationFrame(tick);
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          run(e.target as HTMLElement);
+          io.unobserve(e.target);
+        }
+      },
+      { threshold: 0.6 },
+    );
+    // Wait for the display face: a width measured in the fallback font is wider,
+    // and where the stats sit on the first screen it left a gap inside "No. 3".
+    document.fonts.ready.then(() => counters.forEach((el) => io.observe(el)));
+  }
+</script>

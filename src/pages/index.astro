@@ -1,0 +1,84 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import Hero from '../components/Hero.astro';
+import Stats from '../components/Stats.astro';
+import Story from '../components/Story.astro';
+import TrackRecord from '../components/TrackRecord.astro';
+import Gallery from '../components/Gallery.astro';
+import InTheirWords from '../components/InTheirWords.astro';
+import Press from '../components/Press.astro';
+import Strengths from '../components/Strengths.astro';
+import Internship from '../components/Internship.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+import Motion from '../components/Motion.astro';
+import { loadSite } from '../lib/athlete.ts';
+
+const data = await loadSite();
+const { a } = data;
+const hasStory = Boolean(a.bio?.long.length || a.bio?.short);
+const hasTrack = a.prs.length + a.timeline.length + a.honors.length > 0;
+
+// Only link to sections that render for this profile.
+const menus = [
+  {
+    label: 'About Me',
+    links: [
+      ...(hasStory ? [{ href: '#story', label: 'My story' }] : []),
+      ...(a.strengths.length ? [{ href: '#strengths', label: 'My strengths' }] : []),
+      ...(a.inTheirWords.length ? [{ href: '#words', label: 'In my words' }] : []),
+    ],
+  },
+  {
+    label: 'My Athletics',
+    links: [
+      ...(hasTrack ? [{ href: '#track-record', label: 'Track record' }] : []),
+      ...(a.prs.length ? [{ href: '#personal-records', label: 'Personal records' }] : []),
+      ...(a.honors.length ? [{ href: '#athletic-honors', label: 'Honors & awards' }] : []),
+      ...(data.images.gallery.length ? [{ href: '#in-action', label: 'In action' }] : []),
+      ...(a.press.length ? [{ href: '#press', label: 'In the news' }] : []),
+    ],
+  },
+  {
+    label: 'Business',
+    links: [
+      { href: '#internship', label: 'Feniex internship' },
+      { href: '/resume/', label: 'View résumé' },
+    ],
+  },
+  {
+    label: 'Education',
+    links: [
+      ...(a.resume?.education.length ? [{ href: '/resume/#rs-education', label: 'Academic background' }] : []),
+      ...(hasStory ? [{ href: '#story', label: 'My student-athlete story' }] : []),
+    ],
+  },
+  {
+    label: 'Contact',
+    links: [
+      { href: '#contact', label: 'Get in touch' },
+      ...data.socials.map((social) => ({ href: social.url, label: social.label })),
+    ],
+  },
+].filter((menu) => menu.links.length > 0);
+---
+
+<Base path="/" jsonLd preloadDisplayFont>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <SiteHeader data={data} menus={menus} />
+  <main id="main">
+    <Hero data={data} />
+    <Stats data={data} />
+    <Story data={data} />
+    <TrackRecord data={data} />
+    <Gallery data={data} />
+    <InTheirWords data={data} />
+    <Press data={data} />
+    <Strengths data={data} />
+    <Internship data={data} />
+    <Contact data={data} />
+  </main>
+  <Footer data={data} />
+  <Motion />
+</Base>

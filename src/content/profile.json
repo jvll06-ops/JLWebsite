@@ -1,0 +1,311 @@
+{
+  "$schema": "../../schema/athlete.schema.json",
+  "slug": "james-ledbetter",
+  "name": {
+    "first": "James",
+    "last": "Ledbetter",
+    "full": "James Ledbetter",
+    "preferred": "James"
+  },
+  "tagline": "Late start. Fast finish.",
+  "headline": "Texas Track & Field · 400m Hurdles",
+  "eventGroup": "hurdles",
+  "events": [
+    "400m hurdles",
+    "400m",
+    "4x400m relay"
+  ],
+  "hometown": "Fulshear, Texas",
+  "school": {
+    "name": "The University of Texas at Austin",
+    "major": "Corporate Communication",
+    "classYear": "Junior",
+    "gradDate": "Expected May 2028"
+  },
+  "contact": {
+    "email": "jvll06@gmail.com",
+    "instagram": "https://www.instagram.com/_jamesledbetter",
+    "x": "https://x.com/LedbetterJame"
+  },
+  "bio": {
+    "short": "James Ledbetter is a 400m hurdler for Texas and the 2026 Big Ten champion in the event. A Fulshear native who took up track at 16, he reached the NCAA semifinals in 2026 and spent the year as a Project Manager Intern at Feniex Industries.",
+    "long": [
+      "Ledbetter runs the 400m hurdles, a race won by whoever holds their rhythm longest. In May 2026, competing for Nebraska, he won the Big Ten title in 50.82 in Lincoln. Twelve days later he ran 50.00 at the NCAA West First Round to qualify for nationals, a time Nebraska says ranks fifth in school history, and he went on to the NCAA semifinals in Eugene. That 50.00 was 1.34 seconds faster than his best a year earlier. He was also a fixture on the 4x400m relay, running on four winning Nebraska relays in 2025-26.",
+      "He grew up in Fulshear, in the Houston area, and came to the sport late, starting track at 16. By his senior year at Katy Jordan High School, he finished second in the 300m hurdles at the 2024 UIL 6A state meet and earned USATF and New Balance Outdoor All-American honors. He spent two seasons at Nebraska, making the Scholar-Athlete Honor Roll both springs, then transferred home to Texas for 2026-27. He studies Corporate Communication and describes himself as hardworking and determined.",
+      "The 400m hurdles reward a plan: a set rhythm between barriers, a pace held through the final turn, and quick adjustments at speed when the plan slips. Ledbetter brought that approach to his 2026 Project Manager Internship at Feniex Industries, the Austin manufacturer of emergency-vehicle lighting, sirens and controllers, where he supported project coordination across teams. Pair that with his communication studies and the consistency that put him on Nebraska's honor roll twice, and he gives a team clear updates, firm schedules and calm follow-through."
+    ]
+  },
+  "stats": [
+    {
+      "label": "400m hurdles personal best",
+      "value": "50.00",
+      "note": "NCAA West First Round, 2026"
+    },
+    {
+      "label": "Big Ten 400m hurdles",
+      "value": "1st",
+      "note": "Big Ten Outdoor Championships, 2026"
+    },
+    {
+      "label": "Nebraska all-time 400m hurdles list",
+      "value": "No. 5",
+      "note": "Per Nebraska Athletics, May 2026"
+    },
+    {
+      "label": "Faster in one season",
+      "value": "1.34s",
+      "note": "Best 51.34 (2025) to 50.00 (2026)"
+    }
+  ],
+  "prs": [
+    {
+      "event": "400m hurdles",
+      "mark": "50.00",
+      "meet": "NCAA Division I West First Round",
+      "year": "2026",
+      "indoor": false
+    },
+    {
+      "event": "400m",
+      "mark": "47.69",
+      "meet": "Big Red Classic",
+      "year": "2026",
+      "indoor": false
+    },
+    {
+      "event": "400m",
+      "mark": "48.86",
+      "meet": "Graduate Classic",
+      "year": "2025",
+      "indoor": true
+    },
+    {
+      "event": "600m",
+      "mark": "1:17.98",
+      "meet": "Big Ten Indoor Championships",
+      "year": "2026",
+      "indoor": true
+    },
+    {
+      "event": "300m hurdles (high school)",
+      "mark": "36.69",
+      "meet": "UIL 6A State Meet",
+      "year": "2024",
+      "indoor": false
+    }
+  ],
+  "timeline": [
+    {
+      "year": "2024",
+      "title": "Texas 6A state runner-up",
+      "detail": "Took silver in the 300m hurdles (36.69) at the UIL State Meet for Katy Jordan High School."
+    },
+    {
+      "year": "2025",
+      "title": "Big Ten finalist as a freshman",
+      "detail": "Placed sixth in the 400m hurdles at the Big Ten Championships for Nebraska and reached the NCAA West First Round."
+    },
+    {
+      "year": "2026",
+      "title": "Big Ten champion",
+      "detail": "Won the 400m hurdles title in 50.82 at the Big Ten Outdoor Championships in Lincoln."
+    },
+    {
+      "year": "2026",
+      "title": "NCAA semifinalist",
+      "detail": "Ran 50.00 at the NCAA West First Round, fifth in Nebraska history, then raced in the semifinals at the NCAA Championships in Eugene."
+    },
+    {
+      "year": "2026",
+      "title": "Transfers to Texas",
+      "detail": "Joined the Texas Track & Field roster as a junior for the 2026-27 season."
+    },
+    {
+      "year": "2026",
+      "title": "Project Manager Intern, Feniex Industries",
+      "detail": "Supported cross-functional project coordination at the Austin maker of emergency-vehicle lighting, sirens and controllers."
+    }
+  ],
+  "honors": [
+    {
+      "title": "Big Ten Outdoor Champion, 400m hurdles",
+      "year": "2026"
+    },
+    {
+      "title": "NCAA Division I Outdoor Championships semifinalist, 400m hurdles",
+      "year": "2026"
+    },
+    {
+      "title": "Nebraska Scholar-Athlete Honor Roll",
+      "year": "2025, 2026"
+    },
+    {
+      "title": "UIL 6A state runner-up, 300m hurdles",
+      "year": "2024"
+    },
+    {
+      "title": "USATF All-American (high school)"
+    },
+    {
+      "title": "New Balance Outdoor All-American (high school)"
+    }
+  ],
+  "inTheirWords": [],
+  "press": [
+    {
+      "title": "Huskers Claim Trio of Golds on Final Day of Competition",
+      "outlet": "Nebraska Athletics",
+      "date": "2026-05-17",
+      "url": "https://huskers.com/news/2026/05/17/huskers-claim-trio-of-golds-on-final-day-of-competition"
+    },
+    {
+      "title": "Huskers Add Three More National Qualifiers on Day 3",
+      "outlet": "Nebraska Athletics",
+      "date": "2026-05-29",
+      "url": "https://huskers.com/news/2026/05/29/huskers-add-three-more-national-qualifiers-on-day-3"
+    },
+    {
+      "title": "Tompkins boys take bronze at state meet, Keys wins athlete of the meet",
+      "outlet": "Katy Times",
+      "date": "2024-05-05",
+      "url": "https://www.katytimes.com/stories/tompkins-boys-take-bronze-at-state-meet-keys-wins-athlete-of-the-meet,73672"
+    }
+  ],
+  "strengths": [
+    {
+      "title": "Quick study",
+      "detail": "He took up track at 16 and was a Texas 6A state runner-up by his senior year of high school."
+    },
+    {
+      "title": "Poise under pressure",
+      "detail": "He won a Big Ten title and then ran a lifetime best in an NCAA qualifying round where only the top finishers advanced."
+    },
+    {
+      "title": "Measurable progress",
+      "detail": "He cut 1.34 seconds off his 400m hurdles best in a single season, from 51.34 to 50.00."
+    },
+    {
+      "title": "Clean handoffs",
+      "detail": "He ran on four winning Nebraska 4x400m relays in 2025-26, a role that depends on precise exchanges and trust in teammates."
+    }
+  ],
+  "resume": {
+    "summary": "Corporate Communication student and 2026 Big Ten champion 400m hurdler at The University of Texas at Austin. Project Manager Intern at Feniex Industries (2026). Brings race-planning discipline, composure under pressure and clear stakeholder communication to cross-functional projects.",
+    "experience": [
+      {
+        "role": "Project Manager Intern",
+        "org": "Feniex Industries",
+        "location": "Austin, TX",
+        "dates": "2026",
+        "bullets": [
+          "Coordinated project communication among engineering, production and sales teams at an American manufacturer of emergency-vehicle lighting, sirens and controllers.",
+          "Prepared status updates and tracked schedules, owners and open items for active projects.",
+          "Wrote and organized process documentation so project steps were clear and repeatable across teams.",
+          "Used AI tools, including Claude, to draft stakeholder updates, summarize meeting notes and structure project documents."
+        ]
+      }
+    ],
+    "education": [
+      {
+        "school": "The University of Texas at Austin",
+        "degree": "Major: Corporate Communication",
+        "dates": "2026 – Expected May 2028",
+        "details": [
+          "Texas Track & Field student-athlete (400m hurdles, 4x400m relay)"
+        ]
+      },
+      {
+        "school": "University of Nebraska–Lincoln",
+        "degree": "Undergraduate coursework",
+        "dates": "2024 – 2026",
+        "details": [
+          "Nebraska Scholar-Athlete Honor Roll, Spring 2025 and Spring 2026"
+        ]
+      }
+    ],
+    "athletics": [
+      {
+        "role": "Student-Athlete, 400m Hurdles & 4x400m Relay",
+        "org": "Nebraska Track & Field (Big Ten)",
+        "dates": "2024 – 2026",
+        "bullets": [
+          "Won the 2026 Big Ten Outdoor title in the 400m hurdles (50.82).",
+          "Ran 50.00 at the 2026 NCAA West First Round, fifth in Nebraska history, and competed in the NCAA semifinals.",
+          "Lowered 400m hurdles best by 1.34 seconds in one season; Big Ten finalist as a freshman (2025).",
+          "Ran on four winning 4x400m relays in 2025-26."
+        ]
+      },
+      {
+        "role": "Student-Athlete, 400m Hurdles & 4x400m Relay",
+        "org": "Texas Track & Field (SEC)",
+        "dates": "2026 – Present",
+        "bullets": [
+          "Joined the 2026-27 roster as a junior transfer.",
+          "High school (Katy Jordan): 2024 UIL 6A state runner-up, 300m hurdles; USATF and New Balance Outdoor All-American."
+        ]
+      }
+    ],
+    "leadership": [],
+    "skills": {
+      "core": [
+        "Project Coordination",
+        "Scheduling & Status Tracking",
+        "Stakeholder Communication",
+        "Process Documentation",
+        "Corporate Communication",
+        "Written & Verbal Updates",
+        "Cross-Functional Collaboration"
+      ],
+      "tools": [
+        "Microsoft Excel",
+        "Microsoft Word & PowerPoint",
+        "Google Workspace",
+        "Claude (AI assistant)"
+      ],
+      "languages": []
+    },
+    "honors": [
+      {
+        "title": "Big Ten Outdoor Champion, 400m Hurdles",
+        "year": "2026"
+      },
+      {
+        "title": "NCAA Division I Outdoor Championships Semifinalist, 400m Hurdles",
+        "year": "2026"
+      },
+      {
+        "title": "Nebraska Scholar-Athlete Honor Roll",
+        "year": "2025, 2026"
+      },
+      {
+        "title": "UIL 6A State Runner-Up, 300m Hurdles",
+        "year": "2024"
+      }
+    ]
+  },
+  "hamzaQuote": {
+    "text": "James runs the 400 hurdles, my old event, and he runs it faster than I ever did. The rhythm and nerve that won him a Big Ten title showed up at Feniex too: a plan he trusts, steady updates, calm finishes.",
+    "attribution": "Hamza Deyaf, Founder & CEO, Feniex Industries"
+  },
+  "images": {
+    "hero": "pro.jpg",
+    "resumeCrop": {
+      "x": 0.5,
+      "y": 0.455,
+      "zoom": 1.1
+    },
+    "portrait": "athlete.jpg",
+    "action": []
+  },
+  "photoCredits": [
+    "Portraits: AI-assisted edits of official Texas Athletics headshots"
+  ],
+  "site": {
+    "url": "https://james-ledbetter.vercel.app"
+  },
+  "seo": {
+    "title": "James Ledbetter | Texas Track & Field · Project Management",
+    "description": "James Ledbetter: Texas 400m hurdler, 2026 Big Ten champion and NCAA semifinalist, Corporate Communication student and Feniex project management intern."
+  },
+  "noindex": true
+}

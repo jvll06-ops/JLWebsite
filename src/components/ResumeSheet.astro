@@ -1,0 +1,177 @@
+---
+// The one-page resume (Studio). Single column, real selectable
+// text, standard headings and no tables, so an ATS parses it the way a person
+// reads it. The one picture is the person's photo in the header: it comes
+// after the header's text in the page and carries no text of its own, so what
+// an ATS reads is the same with or without it. Styles: src/styles/resume.css.
+// Every size is a multiple of the sheet's type size (x --fit) and every gap is
+// also scaled by --air, so the PDF renderer (scripts/lib/render.mjs) can
+// loosen a short resume or tighten a long one until it fills exactly one US
+// Letter page.
+import { getImage } from 'astro:assets';
+import type { SiteData } from '../lib/athlete.ts';
+import ResumeItem from './resume/ResumeItem.astro';
+import ResumeSection from './resume/ResumeSection.astro';
+import {
+  RESUME_PHOTO_PX,
+  contactLine,
+  dashes,
+  honorsOf,
+  photoFrame,
+  reference,
+  resumeSections,
+  skillRows,
+} from './resume/resume.ts';
+
+interface Props {
+  data: SiteData;
+}
+const { data } = Astro.props;
+const { a } = data;
+const r = a.resume;
+
+const contact = contactLine(data);
+const sections = resumeSections(data);
+const skills = skillRows(a);
+const honors = honorsOf(a);
+const ref = reference(data);
+const [program, ...disciplines] = (a.headline ?? '').split('·').map((s) => s.trim()).filter(Boolean);
+const discipline = disciplines.join(' · ');
+
+// The photo: the hero file (the studio portrait, or the original headshot when
+// imagery is "original"), as one small square JPEG. A JPEG on purpose: Chrome
+// copies it into the PDF as it is, where an AVIF or WebP would be stored
+// uncompressed. Nobody without a photo of their own gets the placeholder here.
+const hero = data.images.hero;
+const photo = hero.placeholder
+  ? undefined
+  : await getImage({
+      src: hero.src,
+      width: RESUME_PHOTO_PX,
+      height: RESUME_PHOTO_PX,
+      fit: 'cover',
+      position: 'top',
+      format: 'jpg',
+      quality: 82,
+    });
+---
+
+<article class="rs" aria-label={`Resume of ${a.name.full}`}>
+  <header class:list={['rs-header', photo && 'rs-header--photo']}>
+    <h1 class="rs-name">{a.name.full}</h1>
+    {
+      /* Program and discipline as two parts, so a phone can break the line between them (resume.css). */
+      a.headline && (
+        <p class="rs-headline">
+          <span>{program}</span>
+          {discipline && (
+            <>
+              <span class="rs-sep" aria-hidden="true"> · </span>
+              <span>{discipline}</span>
+            </>
+          )}
+        </p>
+      )
+    }
+    <p class="rs-contact">
+      {
+        contact.map((c, i) => (
+          <>
+            {i > 0 && <span class="rs-sep" aria-hidden="true"> · </span>}
+            {c.href ? <a href={c.href}>{c.text}</a> : <span>{c.text}</span>}
+          </>
+        ))
+      }
+    </p>
+    {
+      photo && (
+        <figure class="rs-photo">
+          <span class="rs-photo__frame">
+            <img
+              src={photo.src}
+              alt={`Photo of ${a.name.full}`}
+              width={RESUME_PHOTO_PX}
+              height={RESUME_PHOTO_PX}
+              style={photoFrame(a)}
+              decoding="sync"
+            />
+          </span>
+        </figure>
+      )
+    }
+  </header>
+
+  <div class="rs-body">
+    {
+      r?.summary && (
+        <ResumeSection id="summary" title="Summary">
+          <p class="rs-summary">{dashes(r.summary)}</p>
+        </ResumeSection>
+      )
+    }
+
+    {
+      sections.map((s) => (
+        <ResumeSection id={s.id} title={s.title}>
+          {s.items.map((item) => (
+            <ResumeItem item={item} />
+          ))}
+        </ResumeSection>
+      ))
+    }
+
+    {
+      skills.length > 0 && (
+        <ResumeSection id="skills" title="Skills">
+          <dl class="rs-skills">
+            {skills.map((row) => (
+              <div class="rs-skills__row">
+                <dt>{row.label}:</dt>
+                <dd>
+                  {row.items.map((item, i) => (
+                    <>
+                      {i > 0 && ', '}
+                      <span class="rs-skills__item">{item}</span>
+                    </>
+                  ))}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </ResumeSection>
+      )
+    }
+
+    {
+      honors.length > 0 && (
+        <ResumeSection id="honors" title="Honors">
+          <ul class="rs-honors">
+            {honors.map((h) => (
+              <li>
+                <span class="rs-honors__row">
+                  <span>{h.title}</span>
+                  {h.year && <span class="rs-honors__year">{h.year}</span>}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </ResumeSection>
+      )
+    }
+  </div>
+
+  <ResumeSection id="reference" title="Reference" class="rs-reference">
+    <figure class="rs-quote">
+      {
+        ref.quote && (
+          <blockquote class="rs-quote__text">
+            <p>“{ref.quote}”</p>
+          </blockquote>
+        )
+      }
+      <figcaption class="rs-quote__by">
+        <strong>{ref.name}</strong>{ref.role && <span>, {ref.role}</span>}
+      </figcaption>
+    </figure>
+  </ResumeSection>
+</article>

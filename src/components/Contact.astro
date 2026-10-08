@@ -1,0 +1,150 @@
+---
+// "Let’s talk.": the email button (address assembled in the browser), the
+// person's profiles and website if any, and the resume once more.
+import type { SiteData } from '../lib/athlete.ts';
+import { resumeFileName, websiteOf } from './fit.ts';
+import EmailLink from './EmailLink.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  data: SiteData;
+}
+const { data } = Astro.props;
+const { a, emailParts, socials } = data;
+const website = websiteOf(a);
+const links = [
+  ...socials.map((s) => ({ href: s.url, label: s.label, detail: `@${s.handle}`, rel: 'noopener me' })),
+  ...(website ? [{ href: website, label: 'Website', detail: new URL(website).host.replace(/^www\./, ''), rel: 'noopener me' }] : []),
+];
+---
+
+<section id="contact" class="section contact" aria-labelledby="contact-title">
+  <div class="container contact__inner">
+    <span class="eyebrow" data-reveal>Contact</span>
+    <h2 id="contact-title" class="contact__title display" data-reveal>Let’s talk.</h2>
+    {
+      emailParts && (
+        <div class="contact__email" data-reveal>
+          <EmailLink data={data} class="btn btn--primary contact__btn">
+            <Icon name="mail" class="btn__icon" />
+            Email {data.displayName}
+          </EmailLink>
+          <p class="contact__address" data-mail-text aria-live="polite"></p>
+          <noscript>
+            <p class="contact__address">
+              {emailParts.user} [at] {emailParts.domain}
+            </p>
+          </noscript>
+        </div>
+      )
+    }
+    {
+      links.length > 0 && (
+        <ul class="contact__links" aria-label="Profiles" data-reveal>
+          {links.map((l) => (
+            <li>
+              <a class="contact__link" href={l.href} rel={l.rel}>
+                <span class="contact__link-label">{l.label}</span>
+                <span class="contact__link-detail">{l.detail}</span>
+                <Icon name="arrow-up-right" class="contact__link-icon" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <div class="contact__resume button-row" data-reveal>
+      <a class="btn btn--outline" href="/resume/">
+        View Resume <Icon name="arrow-right" class="btn__icon btn__icon--right" />
+      </a>
+      <a class="btn btn--outline" href="/resume.pdf" download={resumeFileName(a)}>
+        Download PDF <Icon name="download" class="btn__icon btn__icon--down" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    text-align: center;
+  }
+  .contact__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .contact__title {
+    margin-top: var(--space-5);
+    font-size: clamp(4.5rem, 2rem + 11vw, 12rem);
+    line-height: 0.85;
+    color: var(--text);
+  }
+  .contact__email {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-7);
+  }
+  .contact__btn {
+    --btn-h: 3.75rem;
+    padding-inline: 2.25rem;
+    font-size: var(--text-base);
+  }
+  .contact__address {
+    min-height: 1.5em;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  .contact__links {
+    list-style: none;
+    margin: var(--space-6) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+  }
+  .contact__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 3rem;
+    padding: 0 var(--space-5);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--card);
+    text-decoration: none;
+    transition:
+      border-color var(--duration) var(--ease),
+      box-shadow var(--duration) var(--ease);
+  }
+  .contact__link:hover {
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-card);
+  }
+  .contact__link-label {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+  }
+  .contact__link-detail {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  .contact__link :global(.contact__link-icon) {
+    width: 0.95rem;
+    height: 0.95rem;
+    color: var(--accent);
+  }
+  .contact__resume {
+    justify-content: center;
+    margin-top: var(--space-8);
+  }
+  @media (max-width: 30rem) {
+    .contact__resume {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+    }
+  }
+</style>

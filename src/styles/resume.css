@@ -1,0 +1,514 @@
+/* The resume: a white Letter sheet on the studio's light grey (screen) and
+   exactly that sheet as the PDF (print). Reads the Studio tokens from
+   tokens.css by name; the fallbacks only matter where tokens.css doesn't
+   define them. Charcoal type, the quiet bronze accent for the headline, the
+   section labels, the rule under the header and the photo ring.
+
+   Fit: every size is a multiple of --u (the sheet's type size x --fit) and
+   every gap is also scaled by --air. scripts/lib/render.mjs searches its
+   (--fit, --air) path for the loosest pair that still fills a single page and
+   bakes that pair into the built page, so screen and printing match the PDF. */
+
+@page {
+  size: letter;
+  margin: 0;
+}
+
+.rs-page {
+  --rs-paper: var(--paper, #ffffff);
+  --rs-ink: var(--paper-ink, #17181b);
+  --rs-soft: var(--text-soft, #3a3c42);
+  --rs-muted: var(--text-muted, #5c5f66);
+  --rs-hair: var(--line, #e2e0db);
+  --rs-accent: var(--accent, #7d5f43);
+  --rs-rule: var(--accent, #7d5f43);
+  /* Static faces: Chrome prints variable fonts as outlines (no text). */
+  --rs-sans: var(--font-print-sans, 'Archivo Print', Arial, sans-serif);
+  --rs-display: var(--font-print-display, 'Archivo Print Condensed', 'Arial Narrow', Arial, sans-serif);
+  --rs-serif: var(--font-print-serif, 'Newsreader', Georgia, serif);
+
+  /* flow-root: the sheet's bottom margin stays inside the grey page. */
+  display: flow-root;
+  min-height: 100vh;
+  color: var(--text, #17181b);
+  background: var(--surface-2, #eceae6);
+}
+
+/* ---------- Toolbar (screen only) ---------- */
+.rs-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--glass, rgba(250, 250, 248, 0.82));
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border-bottom: 1px solid var(--line, #e2e0db);
+}
+.rs-toolbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: min(100% - 2.5rem, 8.5in * var(--rs-zoom, 1));
+  min-height: 3.75rem;
+  margin-inline: auto;
+}
+.rs-toolbar__back {
+  margin-left: -0.25rem;
+}
+.rs-toolbar__title {
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text-muted, #5c5f66);
+}
+.rs-toolbar__title span {
+  margin-inline: 0.35em;
+  color: var(--accent, #7d5f43);
+}
+.rs-icon {
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+}
+
+/* ---------- The sheet ---------- */
+.rs-sheet {
+  --rs-size: 10pt;
+  display: flex;
+  flex-direction: column;
+  width: 8.5in;
+  min-height: 11in;
+  margin: 2.5rem auto 4.5rem;
+  padding: calc(0.3in + 0.2in * var(--air, 1)) calc(0.35in + 0.25in * var(--air, 1));
+  background: var(--rs-paper);
+  color: var(--rs-ink);
+  box-shadow: var(--shadow-sheet, 0 1px 2px rgb(23 24 27 / 0.06), 0 24px 60px -24px rgb(23 24 27 / 0.22));
+  color-scheme: light;
+}
+
+.rs {
+  --u: calc(var(--rs-size) * var(--fit, 1));
+  --gap: calc(var(--u) * var(--air, 1));
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  font-family: var(--rs-sans);
+  font-size: var(--u);
+  font-weight: 400;
+  line-height: calc(1.26 + 0.14 * var(--air, 1));
+  color: var(--rs-ink);
+  font-kerning: normal;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+}
+.rs :where(h1, h2, h3, p, ul, dl, dd, figure, blockquote) {
+  margin: 0;
+  padding: 0;
+}
+.rs a {
+  color: inherit;
+  text-decoration: none;
+}
+.rs a:hover {
+  color: var(--rs-accent);
+}
+.rs-sep {
+  color: var(--rs-accent);
+}
+
+/* Header: condensed charcoal name, headline in the accent, one contact line;
+   the photo on the right, top-aligned with the name; a thin accent rule under both. */
+.rs-header {
+  padding-bottom: calc(var(--gap) * 0.95);
+  border-bottom: 1.5pt solid var(--rs-rule);
+}
+.rs-header--photo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto 1fr;
+  column-gap: calc(var(--u) * 2);
+  /* The photo is taller than the three lines of text, so the rule sits a little closer under it. */
+  padding-bottom: calc(var(--gap) * 0.75);
+}
+.rs-header--photo > :not(.rs-photo) {
+  grid-column: 1;
+}
+/* The photo: a round portrait inside a fine accent ring, a sliver of paper between the two. */
+.rs-photo {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: start;
+  width: calc(var(--u) * 8.3);
+  padding: calc(var(--u) * 0.24);
+  border: 0.75pt solid var(--rs-accent);
+  border-radius: 50%;
+}
+.rs-photo__frame {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--rs-hair);
+}
+/* The square photo, zoomed and placed by the person's images.resumeCrop (photoFrame in resume.ts). */
+.rs-photo img {
+  position: absolute;
+  top: var(--top, 0%);
+  left: var(--left, 0%);
+  width: calc(100% * var(--zoom, 1));
+  max-width: none;
+}
+.rs-name {
+  font-family: var(--rs-display);
+  font-size: calc(var(--u) * 3.9);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--rs-ink);
+}
+.rs-headline {
+  margin-top: calc(var(--u) * 0.6);
+  font-size: calc(var(--u) * 0.88);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rs-accent);
+}
+.rs-contact {
+  margin-top: calc(var(--u) * 0.25);
+  font-size: calc(var(--u) * 0.95);
+  color: var(--rs-soft);
+}
+.rs-contact > :not(.rs-sep) {
+  white-space: nowrap;
+}
+
+/* Sections: small accent caps heading with a hairline to the right edge. */
+.rs-section {
+  margin-top: calc(var(--gap) * 1.2);
+}
+.rs-section__title {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  margin-bottom: calc(var(--gap) * 0.45);
+  font-family: var(--rs-sans);
+  font-size: calc(var(--u) * 0.8);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--rs-accent);
+}
+.rs-section__title::after {
+  content: '';
+  flex: 1;
+  border-top: 0.6pt solid var(--rs-hair);
+}
+
+.rs-summary {
+  text-wrap: pretty;
+}
+
+/* Entries: title + dates on one flex row, organization below, then bullets. */
+.rs-item + .rs-item {
+  margin-top: calc(var(--gap) * 0.7);
+}
+.rs-item__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5em;
+}
+.rs-item__title {
+  font-family: var(--rs-sans);
+  font-size: calc(var(--u) * 1.02);
+  font-weight: 700;
+  line-height: inherit;
+  text-wrap: pretty;
+  color: var(--rs-ink);
+}
+.rs-item__dates {
+  flex: none;
+  font-size: calc(var(--u) * 0.88);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--rs-muted);
+}
+.rs-item__sub {
+  color: var(--rs-soft);
+  text-wrap: pretty;
+}
+.rs-item__details {
+  font-size: calc(var(--u) * 0.95);
+  color: var(--rs-soft);
+  text-wrap: pretty;
+}
+
+/* A real bullet character (not a drawn disc), so the PDF text keeps it and
+   an ATS can tell where each bullet starts. */
+.rs-bullets,
+.rs-honors {
+  margin-top: calc(var(--gap) * 0.25);
+  padding-left: 1.05em;
+  list-style: '•';
+}
+.rs-bullets li,
+.rs-honors li {
+  padding-left: 0.6em;
+  text-wrap: pretty;
+}
+.rs-bullets li::marker,
+.rs-honors li::marker {
+  color: var(--rs-rule);
+}
+.rs-bullets li + li,
+.rs-honors li + li {
+  margin-top: calc(var(--gap) * 0.16);
+}
+.rs-honors {
+  margin-top: 0;
+}
+.rs-honors__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5em;
+}
+.rs-honors__year {
+  flex: none;
+  font-size: calc(var(--u) * 0.88);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--rs-muted);
+}
+
+/* Skills: label column sized to the longest label (grid, not a table). */
+.rs-skills {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 0.9em;
+  row-gap: calc(var(--gap) * 0.16);
+}
+.rs-skills__row {
+  display: contents;
+}
+.rs-skills dt {
+  font-weight: 700;
+}
+.rs-skills dd {
+  text-wrap: pretty;
+}
+/* A skill never breaks across lines ("Cross-" / "Functional"). */
+.rs-skills__item {
+  white-space: nowrap;
+}
+
+/* Reference: closes the page, held to the bottom edge. */
+.rs .rs-reference {
+  margin-top: auto;
+  padding-top: calc(var(--gap) * 1.2);
+}
+.rs-quote {
+  padding: 0.1em 0 0.1em 1em;
+  border-left: 2pt solid var(--rs-rule);
+}
+.rs-quote__text {
+  font-family: var(--rs-serif);
+  font-size: calc(var(--u) * 1.14);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.42;
+  text-wrap: pretty;
+  color: var(--rs-ink);
+}
+/* Hanging opening quote: the words line up with the attribution. */
+.rs-quote__text p {
+  text-indent: -0.36em;
+}
+.rs-quote__by {
+  margin-top: calc(var(--u) * 0.45);
+  font-size: calc(var(--u) * 0.9);
+  color: var(--rs-soft);
+}
+.rs-quote__by strong {
+  font-weight: 700;
+  color: var(--rs-ink);
+}
+
+/* The renderer measures the natural height with the page stretch off. */
+:root[data-rs-measure] .rs-sheet {
+  min-height: 0;
+}
+
+/* Big screens: the same sheet, scaled up for reading (layout unchanged). */
+@media screen and (min-width: 80rem) {
+  .rs-page {
+    --rs-zoom: 1.15;
+  }
+  .rs-sheet {
+    zoom: var(--rs-zoom);
+  }
+}
+@media screen and (min-width: 110rem) {
+  .rs-page {
+    --rs-zoom: 1.3;
+  }
+}
+
+/* ---------- Phones and small tablets: the sheet reflows ---------- */
+@media screen and (max-width: 54.99rem) {
+  .rs-toolbar__inner {
+    width: min(100% - 1.5rem, 8.5in);
+  }
+  .rs-toolbar__title {
+    display: none;
+  }
+  /* The headline and the contact line break only between their parts. Each part's
+     dot is drawn in its left padding, and every line starts in a clipped strip, so
+     a part that wraps loses its dot: no line starts or ends with "·". */
+  .rs-headline,
+  .rs-contact {
+    --sep: 1.1em;
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: calc(-1 * var(--sep));
+    clip-path: inset(0 0 0 var(--sep));
+  }
+  .rs-headline > .rs-sep,
+  .rs-contact > .rs-sep {
+    display: none;
+  }
+  .rs-headline > :not(.rs-sep),
+  .rs-contact > :not(.rs-sep) {
+    position: relative;
+    padding-left: var(--sep);
+  }
+  .rs-headline > :not(.rs-sep)::before,
+  .rs-contact > :not(.rs-sep)::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    width: var(--sep);
+    text-align: center;
+    color: var(--rs-accent);
+  }
+  /* A finger needs more than a 16px line: every contact item is a full 44px row. */
+  .rs-contact {
+    margin-top: 0;
+    line-height: 2.75rem;
+  }
+  .rs-header--photo {
+    padding-bottom: calc(var(--gap) * 0.4);
+  }
+  .rs-sheet {
+    --rs-size: 0.9375rem;
+    --fit: 1;
+    --air: 1;
+    width: auto;
+    min-height: 0;
+    margin: 1rem 0.75rem 3rem;
+    padding: 2rem clamp(1.25rem, 5vw, 2.5rem) 2.25rem;
+    border-radius: 3px;
+  }
+  .rs-name {
+    font-size: calc(var(--u) * 2.9);
+  }
+  .rs-photo {
+    width: calc(var(--u) * 7.6);
+  }
+  .rs-item__head,
+  .rs-honors__row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .rs-item__dates,
+  .rs-honors__year {
+    order: -1;
+    white-space: normal;
+  }
+  .rs-skills {
+    grid-template-columns: 1fr;
+  }
+  .rs-skills__row + .rs-skills__row dt {
+    margin-top: 0.35em;
+  }
+  .rs-skills__item {
+    white-space: normal;
+  }
+}
+/* Phones: the photo sits beside the name (which may take two lines); the headline and contact line run full width below. */
+@media screen and (max-width: 29.99rem) {
+  .rs-header--photo {
+    grid-template-rows: auto;
+    column-gap: 0.875rem;
+  }
+  .rs-header--photo > .rs-name,
+  .rs-photo {
+    align-self: center;
+  }
+  .rs-header--photo > .rs-headline,
+  .rs-header--photo > .rs-contact {
+    grid-column: 1 / -1;
+  }
+  .rs-header--photo > .rs-headline {
+    margin-top: calc(var(--u) * 0.85);
+  }
+  .rs-photo {
+    grid-row: 1;
+    width: 5.25rem;
+    padding: 0.1875rem;
+  }
+}
+@media screen and (max-width: 25rem) {
+  .rs-toolbar__long {
+    display: none;
+  }
+}
+/* The narrowest phones: no room beside a long name, so the photo goes above it. */
+@media screen and (max-width: 22.49rem) {
+  .rs-header--photo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .rs-photo {
+    grid-column: 1;
+    justify-self: start;
+    margin-bottom: 0.875rem;
+  }
+}
+
+/* ---------- Print: exactly the PDF ---------- */
+@media print {
+  html,
+  body,
+  .rs-page {
+    background: #ffffff !important;
+  }
+  .rs-toolbar {
+    display: none !important;
+  }
+  .rs-sheet {
+    width: 8.5in;
+    /* A hair under the page so rounding never spills a blank page 2. */
+    min-height: calc(11in - 2px);
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .rs a:hover {
+    color: inherit;
+  }
+}

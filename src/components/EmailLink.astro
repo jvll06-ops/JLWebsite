@@ -1,0 +1,35 @@
+---
+// A mailto link that never sits in the HTML as one readable address: the
+// address is reversed + base64'd at build time and assembled in the browser.
+// Without JS the link points at the Contact section instead.
+import type { SiteData } from '../lib/athlete.ts';
+
+interface Props {
+  data: SiteData;
+  class?: string;
+  /** Also fill elements marked [data-mail-text] next to the link with the address. */
+  showAddress?: boolean;
+}
+const { data, class: className } = Astro.props;
+const { emailParts } = data;
+const encoded = emailParts
+  ? btoa(encodeURIComponent(`${emailParts.user}@${emailParts.domain}`).split('').reverse().join(''))
+  : undefined;
+---
+
+{
+  encoded && (
+    <a class={className} href="#contact" data-mail={encoded}>
+      <slot />
+    </a>
+  )
+}
+
+<script>
+  for (const link of document.querySelectorAll<HTMLAnchorElement>('a[data-mail]')) {
+    const address = decodeURIComponent(atob(link.dataset.mail ?? '').split('').reverse().join(''));
+    if (!address.includes('@')) continue;
+    link.href = `mailto:${address}`;
+    for (const text of document.querySelectorAll('[data-mail-text]')) text.textContent = address;
+  }
+</script>

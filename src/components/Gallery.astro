@@ -1,0 +1,143 @@
+---
+// In Action: real competition photos in an editorial grid (the first one
+// leads), with the credit line. Hidden when there are none. The strengths
+// photo, when it is an action photo, is left out here (images.gallery).
+import type { SiteData } from '../lib/athlete.ts';
+import Photo from './Photo.astro';
+import { actionCredits, coverSize } from './fit.ts';
+
+interface Props {
+  data: SiteData;
+}
+const { data } = Astro.props;
+const shown = data.images.gallery.slice(0, 4);
+const credits = actionCredits(data.a);
+
+// Each frame's width (of the 80rem container, and of the screen on tablets) and its shape, per layout
+// below. The photo fills its frame, so `sizes` asks for the width it is drawn at, not the frame's.
+const LEAD = { rem: 54, vw: 66, ratio: 32 / 27 };
+const frames: Record<number, { rem: number; vw: number; ratio: number }[]> = {
+  1: [{ rem: 80, vw: 100, ratio: 16 / 9 }],
+  2: Array(2).fill({ rem: 40, vw: 50, ratio: 4 / 3 }),
+  3: [LEAD, ...Array(2).fill({ rem: 27, vw: 33, ratio: 32 / 27 })],
+  4: [LEAD, ...Array(3).fill({ rem: 27, vw: 33, ratio: 16 / 9 })],
+};
+const sizesOf = (i: number) => {
+  const { src } = shown[i];
+  const f = frames[shown.length][i];
+  return [
+    `(min-width: 80rem) ${coverSize(src, f.rem, 'rem', f.ratio)}`,
+    `(min-width: 48rem) ${coverSize(src, f.vw, 'vw', f.ratio)}`,
+    coverSize(src, 100, 'vw', 3 / 2),
+  ].join(', ');
+};
+---
+
+{
+  shown.length > 0 && (
+    <section id="in-action" class="section gallery" aria-labelledby="gallery-title">
+      <div class="container">
+        <header class="section__head gallery__head" data-reveal>
+          <span class="eyebrow">In action</span>
+          <h2 id="gallery-title" class="section__title">
+            In competition
+          </h2>
+        </header>
+        <div class="gallery__grid" data-items={shown.length}>
+          {shown.map((img, i) => (
+            <figure class="gallery__item" data-reveal style={`--reveal-i: ${i}`}>
+              <Photo
+                src={img.src}
+                alt={img.alt}
+                widths={[480, 720, 960, 1280, 1600, 2000]}
+                sizes={sizesOf(i)}
+                loading="lazy"
+                decoding="async"
+                class="gallery__img"
+              />
+            </figure>
+          ))}
+        </div>
+        {credits.length > 0 && <p class="gallery__credit">Photos: {credits.join(' · ')}</p>}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .gallery__head {
+    margin-bottom: var(--space-7);
+  }
+  .gallery__grid {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .gallery__item {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+  }
+  .gallery :global(.gallery__img) {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    object-position: 50% 35%;
+    transition: transform 1200ms var(--ease-out);
+  }
+  .gallery__item:hover :global(.gallery__img) {
+    transform: scale(1.03);
+  }
+  .gallery__credit {
+    margin-top: var(--space-4);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 48rem) {
+    .gallery__grid {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: var(--space-4);
+    }
+    .gallery__item {
+      grid-column: span 6;
+    }
+    .gallery :global(.gallery__img) {
+      aspect-ratio: auto;
+    }
+    /* 1: one wide frame */
+    [data-items='1'] .gallery__item {
+      aspect-ratio: 16 / 9;
+    }
+    /* 2: side by side */
+    [data-items='2'] .gallery__item {
+      grid-column: span 3;
+      aspect-ratio: 4 / 3;
+    }
+    /* 3: a tall lead and two stacked */
+    [data-items='3'] {
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      aspect-ratio: 16 / 9;
+    }
+    [data-items='3'] .gallery__item {
+      grid-column: span 2;
+    }
+    [data-items='3'] .gallery__item:first-child {
+      grid-column: span 4;
+      grid-row: span 2;
+    }
+    /* 4: a lead and three beside it */
+    [data-items='4'] {
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      aspect-ratio: 16 / 9;
+    }
+    [data-items='4'] .gallery__item {
+      grid-column: span 2;
+    }
+    [data-items='4'] .gallery__item:first-child {
+      grid-column: span 4;
+      grid-row: span 3;
+    }
+  }
+</style>

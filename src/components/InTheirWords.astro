@@ -1,0 +1,159 @@
+---
+// The athlete's own words, verbatim: the first quote set large, the rest in
+// a quieter row beneath it.
+import type { SiteData } from '../lib/athlete.ts';
+import { readableDate } from './fit.ts';
+
+interface Props {
+  data: SiteData;
+}
+const { data } = Astro.props;
+const quotes = data.a.inTheirWords.slice(0, 4);
+const [lead, ...rest] = quotes;
+---
+
+{
+  lead && (
+    <section id="words" class="section words" aria-labelledby="words-title">
+      <div class="container">
+        <header class="section__head words__head" data-reveal>
+          <span class="eyebrow">In {data.displayName}’s words</span>
+          <h2 id="words-title" class="visually-hidden">
+            In {data.displayName}’s words
+          </h2>
+        </header>
+        <figure class="words__lead" data-reveal>
+          <span class="words__mark" aria-hidden="true">
+            “
+          </span>
+          <blockquote class="words__quote">
+            <p>{lead.quote}</p>
+          </blockquote>
+          {(lead.source || lead.date) && (
+            <figcaption class="words__cite">
+              <span class="words__name">{data.a.name.full}</span>
+              <span class="words__src">
+                {lead.url ? <a href={lead.url}>{lead.source ?? 'Source'}</a> : lead.source}
+                {lead.date && (
+                  <>
+                    {lead.source ? ', ' : ''}
+                    {readableDate(lead.date)}
+                  </>
+                )}
+              </span>
+            </figcaption>
+          )}
+        </figure>
+        {rest.length > 0 && (
+          <div class="words__rest">
+            {rest.map((q, i) => (
+              <figure class="words__item" data-reveal style={`--reveal-i: ${i}`}>
+                <blockquote class="words__small">
+                  <p>“{q.quote}”</p>
+                </blockquote>
+                {(q.source || q.date) && (
+                  <figcaption class="words__cite words__cite--small">
+                    {q.url ? <a href={q.url}>{q.source ?? 'Source'}</a> : q.source}
+                    {q.date && (
+                      <>
+                        {q.source ? ', ' : ''}
+                        {readableDate(q.date)}
+                      </>
+                    )}
+                  </figcaption>
+                )}
+              </figure>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .words {
+    padding-bottom: calc(var(--section-gap) * 0.7);
+  }
+  .words__head {
+    margin-bottom: var(--space-6);
+  }
+  .words__lead {
+    position: relative;
+    max-width: 62rem;
+  }
+  .words__mark {
+    display: block;
+    height: 0.5em;
+    margin-bottom: 0.05em;
+    font-family: var(--font-serif);
+    font-size: clamp(6rem, 4rem + 8vw, 11rem);
+    font-weight: 400;
+    line-height: 0.9;
+    color: var(--accent);
+  }
+  .words__quote {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: var(--text-quote);
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .words__cite {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-4);
+    margin-top: var(--space-6);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  .words__name {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    font-size: var(--text-xs);
+    color: var(--text);
+  }
+  .words__name::before {
+    content: '';
+    width: 1.75rem;
+    height: 1px;
+    background: var(--accent);
+  }
+  .words__cite a {
+    color: var(--text);
+  }
+  .words__cite a:hover {
+    color: var(--accent);
+  }
+  .words__rest {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--line);
+  }
+  .words__small {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-xl);
+    line-height: 1.35;
+    color: var(--text-soft);
+  }
+  .words__cite--small {
+    margin-top: var(--space-3);
+    font-size: var(--text-xs);
+  }
+  @media (min-width: 48rem) {
+    .words__rest {
+      grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+      gap: var(--space-8);
+    }
+  }
+</style>

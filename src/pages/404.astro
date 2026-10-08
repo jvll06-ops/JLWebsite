@@ -1,0 +1,125 @@
+---
+// Served by Vercel for any unknown path, so its links stay root-absolute
+// (the relativize step skips this file). Same system: the studio white, a
+// giant condensed 404 in the faintest grey behind the copy, the two ways back.
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { loadSite } from '../lib/athlete.ts';
+
+const data = await loadSite();
+---
+
+<Base title={`Page not found | ${data.a.name.full}`} noindex preloadDisplayFont bodyClass="notfound-page">
+  <main class="notfound" id="main">
+    <div class="notfound__code" aria-hidden="true"></div>
+    <div class="notfound__body container">
+      <a class="notfound__brand" href="/">
+        <span class="notfound__mono" aria-hidden="true" data-initials={data.initials}></span>
+        {data.a.name.full}
+      </a>
+      <p class="eyebrow">Error 404 · Page not found</p>
+      <h1 class="notfound__title">Off the track.</h1>
+      <p class="notfound__text">The page you were looking for doesn’t exist or has moved.</p>
+      <div class="button-row notfound__actions">
+        <a class="btn btn--primary" href="/">
+          {data.displayName}’s home page <Icon name="arrow-right" class="btn__icon btn__icon--right" />
+        </a>
+        <a class="btn btn--outline" href="/resume/">View Resume</a>
+      </div>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .notfound {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    padding-block: var(--space-9);
+  }
+  .notfound__code::before {
+    content: '404';
+    position: absolute;
+    right: var(--gutter);
+    bottom: -0.14em;
+    z-index: -1;
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-condensed);
+    font-weight: var(--weight-black);
+    font-size: clamp(11rem, 36vw, 34rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--surface-2);
+    user-select: none;
+  }
+  .notfound__body {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-5);
+  }
+  .notfound__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 2.75rem;
+    margin-bottom: var(--space-6);
+    font-stretch: var(--stretch-condensed);
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .notfound__mono {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    font-size: 0.95rem;
+  }
+  .notfound__mono::before {
+    content: attr(data-initials);
+  }
+  .notfound__title {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-condensed);
+    font-weight: var(--weight-display);
+    font-size: clamp(4rem, 2rem + 9vw, 10rem);
+    line-height: 0.88;
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .notfound__text {
+    max-width: 32rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-serif-lg);
+    color: var(--text-muted);
+  }
+  .notfound__text {
+    text-wrap: balance;
+  }
+  .notfound__actions {
+    margin-top: var(--space-4);
+  }
+  /* Phones: both buttons at the full width, like the home page's. */
+  @media (max-width: 30rem) {
+    .notfound__body {
+      justify-items: stretch;
+    }
+    .notfound__brand {
+      justify-self: start;
+    }
+    .notfound__actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+</style>

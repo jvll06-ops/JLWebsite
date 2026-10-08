@@ -1,0 +1,230 @@
+---
+// The story: the athlete's studio portrait in uniform (with its one small
+// caption) beside the long-form bio in Newsreader with a drop cap, then the facts.
+// imagery "original": the photo is credited instead of captioned as an AI
+// edit, and it is left out here when the hero already shows the same file.
+import type { SiteData } from '../lib/athlete.ts';
+import Photo from './Photo.astro';
+import { portraitCredit, PORTRAIT_NOTE } from './fit.ts';
+
+interface Props {
+  data: SiteData;
+}
+const { data } = Astro.props;
+const { a } = data;
+const paragraphs = a.bio?.long.length ? a.bio.long : a.bio?.short ? [a.bio.short] : [];
+const portrait = data.images.portrait;
+const original = a.imagery === 'original';
+const repeatsHero = original && a.images?.portrait === a.images?.hero;
+const showPortrait = !portrait.placeholder && !repeatsHero;
+// A fact with two parts (class year and graduation date; major and minor) sets them on two lines:
+// the cells are narrow, and joined by "·" they wrapped with the dot left at a line's end.
+const lines = (...parts: (string | undefined)[]) => parts.filter((p): p is string => Boolean(p));
+const facts = [
+  a.events.length ? { label: a.events.length > 1 ? 'Events' : 'Event', lines: [a.events.join(', ')] } : null,
+  a.hometown ? { label: 'Hometown', lines: [a.hometown] } : null,
+  a.school?.major ? { label: 'Major', lines: lines(a.school.major, a.school.minor && `Minor, ${a.school.minor}`) } : null,
+  a.school?.gradDate || a.school?.classYear ? { label: 'Class', lines: lines(a.school?.classYear, a.school?.gradDate) } : null,
+].filter((f): f is { label: string; lines: string[] } => f !== null);
+---
+
+{
+  paragraphs.length > 0 && (
+    <section id="story" class="section story" aria-labelledby="story-title">
+      <div class="container story__grid">
+        <div class="story__aside">
+          {showPortrait && (
+            <figure class="story__media" data-reveal>
+              <div class="story__frame">
+                <Photo
+                  src={portrait.src}
+                  alt={original ? `${a.name.full}, official portrait` : `${a.name.full} in uniform, studio portrait`}
+                  widths={[400, 600, 800, 1100]}
+                  sizes="(min-width: 80rem) 28rem, (min-width: 64rem) 32vw, (min-width: 40rem) 30rem, 92vw"
+                  loading="lazy"
+                  decoding="async"
+                  class="story__img"
+                />
+              </div>
+              <figcaption class="story__caption">{original ? portraitCredit(a) : PORTRAIT_NOTE}</figcaption>
+            </figure>
+          )}
+          {facts.length > 0 && (
+            <dl class="story__facts" data-reveal>
+              {facts.map((f) => (
+                <div class="story__fact">
+                  <dt>{f.label}</dt>
+                  <dd>
+                    {f.lines.map((line) => (
+                      <span>{line}</span>
+                    ))}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </div>
+
+        <div class="story__body">
+          <header class="section__head story__head" data-reveal>
+            <span class="eyebrow">The story</span>
+            <h2 id="story-title" class="section__title">
+              About {data.displayName}
+            </h2>
+          </header>
+          <div class="story__text" data-reveal>
+            {paragraphs.map((p) => (
+              <p class="story__p">{p}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .story__grid {
+    display: grid;
+    gap: var(--space-7);
+  }
+  /* Phones: heading, then portrait + facts, then the story. */
+  .story__body {
+    display: contents;
+  }
+  .story__head {
+    order: -1;
+    margin-bottom: 0;
+  }
+  .story__aside {
+    display: grid;
+    gap: var(--space-6);
+    max-width: 30rem;
+  }
+  .story__frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+  }
+  .story :global(.story__img) {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    object-position: 50% 20%;
+    border-radius: var(--radius-sm);
+  }
+  .story__caption {
+    margin-top: var(--space-3);
+    font-size: var(--text-2xs);
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    color: var(--text-muted);
+  }
+
+  .story__text {
+    max-width: 38rem;
+    font-family: var(--font-serif);
+    font-size: var(--text-serif-lg);
+    line-height: var(--leading-serif);
+    color: var(--text-soft);
+  }
+  .story__p + .story__p {
+    margin-top: 1.1em;
+  }
+  .story__p:first-child {
+    font-size: 1.12em;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .story__p:first-child::first-letter {
+    float: left;
+    margin: 0.06em 0.12em 0 -0.02em;
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-condensed);
+    font-weight: var(--weight-display);
+    font-size: 4.6em;
+    line-height: 0.8;
+    color: var(--accent);
+  }
+
+  .story__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5) var(--space-5);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--line);
+  }
+  .story__fact dt {
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .story__fact dd {
+    margin-top: var(--space-1);
+    font-size: var(--text-base);
+    font-weight: var(--weight-medium);
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  .story__fact dd {
+    text-wrap: balance;
+  }
+  .story__fact dd span {
+    display: block;
+  }
+
+  @media (max-width: 22rem) {
+    .story__facts {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Tablets: the portrait and the facts side by side, so the column beside the photo is not left empty. */
+  @media (min-width: 40rem) and (max-width: 63.99rem) {
+    .story__aside {
+      grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+      gap: var(--space-7);
+      align-items: end;
+      max-width: none;
+    }
+    .story__facts {
+      grid-template-columns: 1fr;
+      padding-top: 0;
+      border-top: 0;
+      /* Level with the photo's foot, not with the caption under it. */
+      margin-bottom: calc(var(--space-3) + var(--text-2xs) * 1.4);
+    }
+    .story__fact {
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--line);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .story__grid {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+      gap: clamp(var(--space-8), 7vw, var(--space-10));
+      align-items: start;
+    }
+    .story__aside {
+      max-width: none;
+    }
+    .story__body {
+      display: block;
+    }
+    .story__head {
+      margin-bottom: clamp(var(--space-7), 2rem + 3vw, var(--space-9));
+    }
+  }
+  /* The portrait + facts ride along while the story is read, when they fit. */
+  @media (min-width: 64rem) and (min-height: 50rem) {
+    .story__aside {
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-6));
+    }
+  }
+</style>

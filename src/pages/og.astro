@@ -1,0 +1,24 @@
+---
+// Source for /og.jpg. The build screenshots this page at 1200x630 and then
+// removes it from the output, so it never ships.
+import Base from '../layouts/Base.astro';
+import OgCard from '../components/OgCard.astro';
+import { loadSite } from '../lib/athlete.ts';
+
+const data = await loadSite();
+---
+
+<Base noindex bodyClass="og-page">
+  <main>
+    <OgCard data={data} />
+  </main>
+</Base>
+
+<style is:global>
+  .og-page {
+    margin: 0;
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+  }
+</style>

@@ -1,0 +1,39 @@
+---
+// One resume entry: bold title with the dates flush right (flex, not a
+// table), the organization or degree under it, then bullets or a details line.
+import type { ResumeItem } from './resume.ts';
+
+interface Props {
+  item: ResumeItem;
+}
+const { item } = Astro.props;
+---
+
+<div class="rs-item">
+  <div class="rs-item__head">
+    <h3 class="rs-item__title">{item.title}</h3>
+    {item.dates && <p class="rs-item__dates">{item.dates}</p>}
+  </div>
+  {item.sub && <p class="rs-item__sub">{item.sub}</p>}
+  {
+    item.details.length > 0 && (
+      <p class="rs-item__details">
+        {item.details.map((d, i) => (
+          <>
+            {i > 0 && <span class="rs-sep" aria-hidden="true"> · </span>}
+            <span>{d}</span>
+          </>
+        ))}
+      </p>
+    )
+  }
+  {
+    item.bullets.length > 0 && (
+      <ul class="rs-bullets">
+        {item.bullets.map((b) => (
+          <li>{b}</li>
+        ))}
+      </ul>
+    )
+  }
+</div>

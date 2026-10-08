@@ -1,0 +1,106 @@
+---
+// Credits, the AI portrait note, the non-affiliation line. No hub link.
+import type { SiteData } from '../lib/athlete.ts';
+import { actionCredits, portraitCredit, resumeFileName } from './fit.ts';
+
+interface Props {
+  data: SiteData;
+}
+const { data } = Astro.props;
+const { a } = data;
+const year = new Date().getFullYear();
+const credits = actionCredits(a);
+const hasPortraits = !data.images.hero.placeholder || !data.images.portrait.placeholder;
+---
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__top">
+      <p class="footer__name">{a.name.full}</p>
+      <ul class="footer__links">
+        <li><a href="/resume/">Resume</a></li>
+        <li><a href="/resume.pdf" download={resumeFileName(a)}>Download PDF</a></li>
+        <li><a href="#top">Back to top</a></li>
+      </ul>
+    </div>
+    <div class="footer__fine">
+      {credits.length > 0 && <p>Photos: {credits.join(' · ')}.</p>}
+      {hasPortraits &&
+        (a.imagery === 'original' ? (
+          <p>{portraitCredit(a).replace(/^Photo/, 'Portrait')}.</p>
+        ) : (
+          <p>Portraits are AI-assisted edits of official Texas Athletics headshots.</p>
+        ))}
+      <p>Personal portfolio. Not affiliated with or endorsed by The University of Texas at Austin.</p>
+      <p>{`© ${year} ${a.name.full}`}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding-block: var(--space-8) var(--space-7);
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    font-size: var(--text-sm);
+  }
+  .footer__inner {
+    display: grid;
+    gap: var(--space-6);
+  }
+  .footer__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-6);
+  }
+  .footer__name {
+    font-family: var(--font-display);
+    font-stretch: var(--stretch-condensed);
+    font-weight: var(--weight-display);
+    font-size: var(--text-2xl);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .footer__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-6);
+  }
+  .footer__links a {
+    display: inline-flex;
+    align-items: center;
+    /* A full 44px touch target. */
+    min-height: 2.75rem;
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--text-muted);
+    transition: color var(--duration) var(--ease);
+  }
+  .footer__links a:hover {
+    color: var(--text);
+  }
+  .footer__fine {
+    display: grid;
+    gap: var(--space-1);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--line);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  @media (min-width: 56rem) {
+    .footer__fine {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-1) var(--space-8);
+    }
+  }
+</style>

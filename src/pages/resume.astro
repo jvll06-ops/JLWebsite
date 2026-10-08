@@ -1,0 +1,39 @@
+---
+// /resume/: on screen the paper sheet centered on the studio grey, under a slim
+// toolbar (Back to site, Download PDF). In print it is exactly the PDF: the
+// build prints this page to /resume.pdf (one US Letter page or the build
+// fails) and bakes the chosen --fit/--air into it, so browser printing matches.
+import Base from '../layouts/Base.astro';
+import ResumeSheet from '../components/ResumeSheet.astro';
+import { resumeFileName } from '../components/resume/resume.ts';
+import { loadSite } from '../lib/athlete.ts';
+import '../styles/resume.css';
+
+const data = await loadSite();
+const { a } = data;
+const title = `Resume | ${a.name.full}`;
+const description = `One-page resume of ${a.name.full}${a.headline ? `, ${a.headline}` : ''}. Download as PDF.`;
+---
+
+<Base path="/resume/" title={title} description={description} jsonLd bodyClass="rs-page">
+  <header class="rs-toolbar">
+    <nav class="rs-toolbar__inner" aria-label="Resume">
+      <a class="btn btn--ghost btn--sm rs-toolbar__back" href="/">
+        <svg class="rs-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+          <path d="M12.5 4.5 7 10l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span class="btn__label">Back<span class="rs-toolbar__long"> to site</span></span>
+      </a>
+      <p class="rs-toolbar__title">{a.name.full} <span aria-hidden="true">·</span> Resume</p>
+      <a class="btn btn--primary btn--sm rs-toolbar__pdf" href="/resume.pdf" download={resumeFileName(a)}>
+        <svg class="rs-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+          <path d="M10 3.5v9M5.75 8.5 10 12.75l4.25-4.25M4.5 16h11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span>Download PDF</span>
+      </a>
+    </nav>
+  </header>
+  <main class="rs-sheet" id="main">
+    <ResumeSheet data={data} />
+  </main>
+</Base>
