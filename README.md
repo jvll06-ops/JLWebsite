@@ -4,8 +4,8 @@ This is the code behind your personal website and your one-page resume. Hamza
 Deyaf and the Feniex Industries team built it for you as a thank-you for your
 2026 Project Manager internship. It's yours now: change anything you like.
 
-- **Your site today:** https://james-ledbetter.vercel.app/
-- **Your resume:** https://james-ledbetter.vercel.app/resume/ (PDF: https://james-ledbetter.vercel.app/resume.pdf)
+- **Your site today:** https://jamesledbetter.com/
+- **Your resume:** https://jamesledbetter.com/resume/ (PDF: https://jamesledbetter.com/resume.pdf)
 
 ## What's in here
 
@@ -26,7 +26,7 @@ Pick one:
 
 1. **No tools needed:** on this page on GitHub, click the green **Code** button,
    then **Download ZIP**, and unzip it.
-2. **With git:** `git clone https://github.com/hdeyaf-sketch/james-ledbetter-site.git`
+2. **With git:** `git clone https://github.com/jvll06-ops/JLWebsite.git`
 
 ## 2. See it on your computer
 
@@ -109,32 +109,22 @@ The PDF is printed from the same words as the `/resume/` page.
 along with your edits.** Vercel's build machines can't print PDFs, so your live
 site uses the copy saved in `public/`.
 
-## 6. Put it online with your own free Vercel account
+## 6. Publish updates to your website
 
-1. **Get your own copy on GitHub.** Vercel publishes a repository from your own
-   GitHub account. (If Hamza has already moved this repository into your
-   account, skip to 2.) Easiest: on GitHub click **+ > New repository**, name
-   it `james-ledbetter-site`, choose **Private**, create it, then click **uploading an
-   existing file** and drag in everything from the unzipped folder. With git:
-   create the empty repository, then in your project folder run
-   `git remote set-url origin https://github.com/<your-username>/james-ledbetter-site.git`
-   and `git push -u origin main`.
-2. Go to [vercel.com](https://vercel.com) and sign up with **Continue with
-   GitHub** (the free Hobby plan is all you need).
-3. Click **Add New... > Project** and **Import** your `james-ledbetter-site`
-   repository. (If it isn't listed, click **Adjust GitHub App Permissions** and
-   give Vercel access to it.)
-4. Check the settings: **Framework Preset: Astro**, **Build Command:
-   `npm run build`**, **Output Directory: `dist`**. Click **Deploy**.
-5. In a minute Vercel shows your new address (something like
-   `https://james-ledbetter-site.vercel.app`). Put it in `site.url` in
-   `profile.json`, run `npm run build`, and commit and push. From now on,
-   every push to GitHub updates your site automatically.
-6. Your current address, https://james-ledbetter.vercel.app, stays on Hamza's Vercel account and keeps
-   working until you're set up. Send Hamza your new address when it's live.
+Your live site is **https://jamesledbetter.com**. The Vercel project
+**jamesledbetter** is connected to **jvll06-ops/JLWebsite** on GitHub.
 
-Want your own domain (like `yourname.com`)? Buy one and add it under your
-Vercel project's **Settings > Domains**, then put it in `site.url`.
+1. Make and preview your changes locally.
+2. If you changed resume content or photos, run `npm run build` and include
+   `public/resume.pdf`, `public/og.jpg` and `scripts/last-render.json` in your commit.
+3. Commit your changes and push them to the **main** branch on GitHub.
+4. Vercel automatically builds and publishes each push. The changes go live
+   after the build succeeds; saving a file on your computer alone does not publish it.
+
+Deployment settings: **Astro**, **Node.js 24**, install command `npm ci`,
+build command `npm run build`, output directory `dist`.
+You can check deployment status in the
+[Vercel project dashboard](https://vercel.com/s5f6w669jn-9159/jamesledbetter).
 
 ## 7. Let Google find your site
 
