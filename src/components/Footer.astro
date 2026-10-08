@@ -26,7 +26,7 @@ const hasPortraits = !data.images.hero.placeholder || !data.images.portrait.plac
     <div class="footer__fine">
       {credits.length > 0 && <p>Photos: {credits.join(' · ')}.</p>}
       {hasPortraits &&
-        (a.imagery === 'original' ? (
+        (a.imagery !== 'ai' ? (
           <p>{portraitCredit(a).replace(/^Photo/, 'Portrait')}.</p>
         ) : (
           <p>Portraits are AI-assisted edits of official Texas Athletics headshots.</p>

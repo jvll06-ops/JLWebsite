@@ -14,7 +14,7 @@ const { data } = Astro.props;
 const { a } = data;
 const paragraphs = a.bio?.long.length ? a.bio.long : a.bio?.short ? [a.bio.short] : [];
 const portrait = data.images.portrait;
-const original = a.imagery === 'original';
+const original = a.imagery !== 'ai';
 const repeatsHero = original && a.images?.portrait === a.images?.hero;
 const showPortrait = !portrait.placeholder && !repeatsHero;
 // A fact with two parts (class year and graduation date; major and minor) sets them on two lines:
@@ -38,7 +38,7 @@ const facts = [
               <div class="story__frame">
                 <Photo
                   src={portrait.src}
-                  alt={original ? `${a.name.full}, official portrait` : `${a.name.full} in uniform, studio portrait`}
+                  alt={a.images?.portraitAlt ?? (original ? portrait.alt : `${a.name.full} in uniform, studio portrait`)}
                   widths={[400, 600, 800, 1100]}
                   sizes="(min-width: 80rem) 28rem, (min-width: 64rem) 32vw, (min-width: 40rem) 30rem, 92vw"
                   loading="lazy"

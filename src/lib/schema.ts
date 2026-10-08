@@ -14,7 +14,7 @@ const when = z.union([z.string().trim().min(1), z.number()]).transform((v) => St
 const social = text;
 
 export const EVENT_GROUPS = ['sprints', 'hurdles', 'jumps', 'throws', 'distance', 'multis', 'other'] as const;
-export const IMAGERY = ['ai', 'original'] as const;
+export const IMAGERY = ['ai', 'original', 'provided'] as const;
 export const DEFAULT_HAMZA_ATTRIBUTION = 'Hamza Deyaf, Founder & CEO, Feniex Industries';
 
 const entryWithBullets = z.strictObject({
@@ -143,6 +143,7 @@ export const athleteSchema = z.strictObject({
     .strictObject({
       hero: text.optional(),
       portrait: text.optional(),
+      portraitAlt: text.optional(),
       action: z.array(text).default([]),
       /** What each action photo shows, in the same order (alt text). Omitted = "<name> competing". */
       actionAlt: z.array(text).default([]),
@@ -175,7 +176,7 @@ export const athleteSchema = z.strictObject({
     .optional(),
   /**
    * How the portraits were made. "ai": AI-assisted edits of the official headshot (light studio, captioned as
-   * such). "original": the untouched official photo, shown framed, with no AI caption.
+   * such). "original": framed photography. "provided": supplied photos in the existing layout, without AI captions.
    */
   imagery: z.enum(IMAGERY).default('ai'),
   photoCredits: z.array(text).default([]),

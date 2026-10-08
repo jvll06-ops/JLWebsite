@@ -18,7 +18,7 @@ const origin = a.eventGroup === 'other' ? 'the squad' : 'the track';
 const feature = data.images.feature;
 // A studio portrait carries its note, like everywhere else it appears.
 const isPortrait = feature !== undefined && feature.src === data.images.portrait.src;
-const note = isPortrait ? (a.imagery === 'original' ? portraitCredit(a) : PORTRAIT_NOTE) : undefined;
+const note = isPortrait ? (a.imagery !== 'ai' ? portraitCredit(a) : PORTRAIT_NOTE) : undefined;
 // The frame is tall on desktop (about 4:7 beside the cards), 3:2 on tablets and square on phones; a
 // wide photo fills it by its height, so `sizes` asks for the width it is drawn at (fit.ts coverSize).
 const sizes = feature

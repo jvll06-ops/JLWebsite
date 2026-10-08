@@ -291,14 +291,25 @@
     "hero": "pro.jpg",
     "resumeCrop": {
       "x": 0.5,
-      "y": 0.455,
-      "zoom": 1.1
+      "y": 0.43,
+      "zoom": 1.7
     },
     "portrait": "athlete.jpg",
-    "action": []
+    "action": [
+      "athlete.jpg"
+    ],
+    "portraitAlt": "James Ledbetter running on the track in a Nebraska uniform",
+    "actionAlt": [
+      "James Ledbetter running on the track in a Nebraska uniform"
+    ],
+    "feature": "athlete.jpg",
+    "featureFocus": {
+      "x": 0.45,
+      "y": 0.4
+    }
   },
   "photoCredits": [
-    "Portraits: AI-assisted edits of official Texas Athletics headshots"
+    "Portraits: Provided by James Ledbetter"
   ],
   "site": {
     "url": "https://jamesledbetter.com"
@@ -307,5 +318,6 @@
     "title": "James Ledbetter | Texas Track & Field · Project Management",
     "description": "James Ledbetter: Texas 400m hurdler, 2026 Big Ten champion and NCAA semifinalist, Corporate Communication student and Feniex project management intern."
   },
-  "noindex": true
+  "noindex": true,
+  "imagery": "provided"
 }

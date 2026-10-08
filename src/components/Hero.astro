@@ -18,7 +18,7 @@ const { data } = Astro.props;
 const { a, site } = data;
 const hero = data.images.hero;
 const framed = a.imagery === 'original' && !hero.placeholder;
-const note = hero.placeholder ? undefined : framed ? portraitCredit(a) : PORTRAIT_NOTE;
+const note = hero.placeholder ? undefined : a.imagery !== 'ai' ? portraitCredit(a) : PORTRAIT_NOTE;
 // The name's widest line, in em: the CSS divides the column width by it.
 const nameWidth = Math.max(widthEm(a.name.first), widthEm(a.name.last)).toFixed(3);
 // The eyebrow in two parts, program and discipline ("Texas Track & Field" + "200m · 100m · 4x100m"):

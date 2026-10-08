@@ -121,7 +121,7 @@ async function build(): Promise<SiteData> {
   const images = a.images;
 
   const hero = (await athleteImage(a.slug, images?.hero, `${full}`)) ?? placeholder('hero');
-  const portrait = (await athleteImage(a.slug, images?.portrait, `Portrait of ${full}`)) ?? placeholder('portrait');
+  const portrait = (await athleteImage(a.slug, images?.portrait, images?.portraitAlt ?? `Portrait of ${full}`)) ?? placeholder('portrait');
   const action: Img[] = [];
   for (const [i, file] of (images?.action ?? []).entries()) {
     const img = await athleteImage(a.slug, file, images?.actionAlt[i] ?? `${full} competing`);
